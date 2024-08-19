@@ -6,7 +6,6 @@ export const createThread = async (
   image: string,
   content: null | string
 ) => {
-  console.log(authorId, image, content);
   if (!content) {
     throw new Error("Content is required");
   }
