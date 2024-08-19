@@ -13,7 +13,7 @@ const LoggedInButton = async () => {
 
   if (session && session.user?.name) {
     return (
-      <LoggedInDropdown>
+      <LoggedInDropdown session={session}>
         <Button
           size="sm"
           variant="default"

@@ -5,14 +5,15 @@ import { useEffect } from "react";
 
 export default function Error({
   error,
-  reset,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
 }) {
   useEffect(() => {
     console.error(error);
   }, [error]);
+  const reset = () => {
+    window.location.reload();
+  };
 
   return (
     <div className="flex h-full justify-center items-center">
@@ -22,14 +23,14 @@ export default function Error({
         <Button
           variant="secondary"
           onClick={() => reset()}
-          className=" text-white font-bold py-2 px-4 rounded relative top-4"
+          className=" dark:text-white font-bold py-2 px-4 rounded relative top-4"
         >
           Try again
         </Button>
         <Button
           variant="outline"
           onClick={() => (window.location.href = "/")}
-          className=" text-white font-bold py-2 px-4 rounded relative top-8"
+          className=" dark:text-white font-bold py-2 px-4 rounded relative top-8"
         >
           Back to Home
         </Button>

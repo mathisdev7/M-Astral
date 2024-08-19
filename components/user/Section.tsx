@@ -1,9 +1,28 @@
 "use client";
 
+import { Threads } from "@/components/landing/Threads";
+import PrismaTypes from "@prisma/client";
+import { Session } from "next-auth";
 import { Fragment, useState } from "react";
 
-export default function Section() {
+type ThreadWithAuthor = PrismaTypes.Thread & {
+  author: PrismaTypes.User;
+  likes: PrismaTypes.Like[];
+};
+
+type ThreadWithAuthorAndComments = ThreadWithAuthor & {
+  comments: PrismaTypes.Comment[];
+};
+
+export default function Section({
+  session,
+  userThreads,
+}: {
+  session: Session | null;
+  userThreads: ThreadWithAuthorAndComments[];
+}) {
   const [choice, setChoice] = useState("threads");
+  const threadsWithMedia = userThreads.filter((thread) => thread.image);
   return (
     <Fragment>
       <div className="flex flex-row justify-center items-center w-full relative top-7 p-1">
@@ -43,6 +62,23 @@ export default function Section() {
           </span>
         </section>
       </div>
+      {choice === "threads" && (
+        <div className="flex justify-center items-center relative top-12">
+          <Threads threads={userThreads} session={session} />
+        </div>
+      )}
+      {choice === "media" && (
+        <div className="flex justify-center items-center relative top-12">
+          <Threads threads={threadsWithMedia} session={session} />
+        </div>
+      )}
+      {choice === "reposts" && (
+        <div className="flex justify-center items-center relative top-20">
+          <span className="text-xl dark:text-white text-black">
+            Nothing here :(
+          </span>
+        </div>
+      )}
     </Fragment>
   );
 }

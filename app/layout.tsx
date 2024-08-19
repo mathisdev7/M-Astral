@@ -12,13 +12,16 @@ export const metadata: Metadata = {
   description: "F'Threads is a social media platform.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
       <body className="w-full min-h-screen">
         <SessionProvider>
           <ThemeProvider

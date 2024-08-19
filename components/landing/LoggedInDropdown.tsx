@@ -1,5 +1,6 @@
 "use client";
-import { LogOut, Pencil } from "lucide-react";
+import { Eye, LogOut, Pencil } from "lucide-react";
+import { Session } from "next-auth";
 import { useRouter } from "next/navigation";
 import { signOutAction } from "../action/signOut.action";
 import {
@@ -11,9 +12,13 @@ import {
 
 export type LoggedInDropdownProps = {
   children: React.ReactNode;
+  session: Session | null;
 };
 
-export default function LoggedInDropdown({ children }: LoggedInDropdownProps) {
+export default function LoggedInDropdown({
+  children,
+  session,
+}: LoggedInDropdownProps) {
   const router = useRouter();
   return (
     <DropdownMenu>
@@ -37,6 +42,15 @@ export default function LoggedInDropdown({ children }: LoggedInDropdownProps) {
           >
             <Pencil className="w-4 h-4 mr-2" />
             Edit Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              router.push(`/user/${session?.user.username}`);
+            }}
+            className="bg-transparent hover:border-transparent"
+          >
+            <Eye className="w-4 h-4 mr-2" />
+            View Profile
           </DropdownMenuItem>
         </form>
       </DropdownMenuContent>

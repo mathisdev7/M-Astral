@@ -1,7 +1,6 @@
 import { ToggleMode } from "@/components/ui/toggleMode";
 import LoggedInButton from "./LoggedInButton";
 import Logo from "./Logo";
-import MobileSection from "./MobileSection";
 
 export default function Header() {
   return (
@@ -10,7 +9,6 @@ export default function Header() {
         <div className="flex relative flex-row space-x-4 right-20">
           <Logo />
         </div>
-        <MobileSection />
 
         <div className="relative top-px left-24">
           <LoggedInButton />

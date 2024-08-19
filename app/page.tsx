@@ -1,20 +1,37 @@
 "use server";
 import { auth } from "@/auth/auth";
-import { Post } from "@/components/landing/Post";
+import { Threads } from "@/components/landing/Threads";
 import Username from "@/components/landing/Username";
 import { prisma } from "@/lib/prisma";
 
 export default async function Home() {
-  const posts = await prisma.post.findMany({
+  const threads = await prisma.thread.findMany({
     orderBy: {
       createdAt: "desc",
     },
     include: {
       author: true,
+      likes: true,
+      comments: {
+        include: {
+          author: true,
+        },
+      },
     },
   });
   const session = await auth();
-  if (!session) return null;
+  if (!session)
+    return (
+      <main>
+        <div className="flex flex-row justify-center items-center w-full h-full">
+          <div className="h-full w-full flex justify-center items-center flex-row">
+            <h1 className="text-2xl font-bold dark:text-white text-black relative top-6">
+              Please sign in to view this page.
+            </h1>
+          </div>
+        </div>
+      </main>
+    );
   const user = await prisma.user.findUnique({
     where: {
       id: session.user.id,
@@ -27,9 +44,9 @@ export default async function Home() {
     <main>
       <div className="flex flex-row justify-center items-center w-full h-full">
         <div className="h-full w-full flex justify-center items-center flex-row">
-          {posts.length > 0 ? (
+          {threads.length > 0 ? (
             <div className="flex justify-center items-center relative">
-              <Post posts={posts} />
+              <Threads threads={threads} session={session} />
             </div>
           ) : (
             <div className="flex justify-center relative">

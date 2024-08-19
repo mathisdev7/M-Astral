@@ -44,7 +44,9 @@ export default function EditAvatar({
           <div className="text-white text-sm font-bold">
             {session.user.name}
           </div>
-          <div className="text-white text-xs">{session.user.username}</div>
+          <div className="text-white text-xs truncate w-20">
+            {session.user.username}
+          </div>
         </div>
       </div>
       <Credenza>
