@@ -1,16 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
 
-export default function Error({
-  error,
-}: {
-  error: Error & { digest?: string };
-}) {
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
+export default function Error() {
   const reset = () => {
     window.location.reload();
   };
