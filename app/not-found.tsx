@@ -1,7 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-
 export default function Error() {
   const reset = () => {
     window.location.reload();
@@ -12,20 +10,18 @@ export default function Error() {
       <div className="flex flex-col justify-center items-center">
         <h2 className="text-2xl font-bold">Error</h2>
         <p>Something went wrong!</p>
-        <Button
-          variant="secondary"
+        <button
           onClick={() => reset()}
-          className=" dark:text-white font-bold py-2 px-4 rounded relative top-4"
+          className=" dark:text-black dark:bg-[#fff] bg-[#000] font-bold py-2 px-4 rounded relative top-4"
         >
           Try again
-        </Button>
-        <Button
-          variant="outline"
+        </button>
+        <button
           onClick={() => (window.location.href = "/")}
           className=" dark:text-white font-bold py-2 px-4 rounded relative top-8"
         >
           Back to Home
-        </Button>
+        </button>
       </div>
     </div>
   );
