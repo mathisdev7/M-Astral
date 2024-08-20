@@ -7,13 +7,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
 import PrismaTypes from "@prisma/client";
-import {
-  Heart,
-  HeartOff,
-  MessageCircleMore,
-  MoreHorizontal,
-  X,
-} from "lucide-react";
+import { Heart, MessageSquare, MoreHorizontal, X } from "lucide-react";
 import { Session } from "next-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -119,10 +113,11 @@ export const Threads = ({
             </div>
           ) : null}
           <div className="flex flex-row items-center justify-start gap-2 py-2 w-full relative bottom-4">
-            <div>
+            <div className="w-auto h-auto">
               {post.likes.find((like) => like.userId === session?.user.id) ? (
-                <HeartOff
-                  className="size-5 dark:text-white"
+                <Heart
+                  className="size-5 dark:text-[#ff0000]"
+                  fill="red"
                   onClick={() => handleLike(post.id)}
                 />
               ) : (
@@ -136,8 +131,8 @@ export const Threads = ({
               <span className="text-gray-500">‧</span>
             </div>
             <div>
-              <MessageCircleMore
-                className="size-5 dark:text-white"
+              <MessageSquare
+                className="size-5 dark:text-white relative top-[0.5px]"
                 onClick={() => router.push(`/threads/${post.id}`)}
               />
             </div>
