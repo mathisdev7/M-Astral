@@ -23,7 +23,7 @@ export default function Username({ userId }: { userId: string }) {
         onChange={(e) => setUsername(e.target.value)}
       />
       <Button
-        className=" text-white font-bold py-2 px-4 rounded mt-2"
+        className=" dark:text-black text-white font-bold py-2 px-4 rounded mt-2"
         onClick={async () => {
           try {
             if (username.length < 2) {
