@@ -43,6 +43,29 @@ model Session {
   @@map("sessions")
 }
 
+model UserPreference {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categories Category[]
+  interactions Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Category {
+  GENERAL
+  TECHNOLOGY
+  LIFESTYLE
+  BUSINESS
+  ENTERTAINMENT
+  SPORTS
+  CARS
+  GADGETS
+  MUSIC
+
+}
+
 model User {
   id            String    @id @default(cuid())
   username      String?    @unique
@@ -62,6 +85,7 @@ model User {
   likes         Like[]
   comments      Comment[]
   commentLikes  CommentLike[]
+  preferences   UserPreference[]
 
   @@map("users")
 }

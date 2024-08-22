@@ -229,7 +229,7 @@ export default function ThreadDetails({
                       }}
                       className="text-sm font-bold dark:text-white text-black truncate relative w-auto"
                     >
-                      {post.author.name}
+                      {comment.author.name}
                     </span>
                     <span className="text-xs text-gray-500 relative top-1">
                       {formatRelativeTime(comment.createdAt)} ago
