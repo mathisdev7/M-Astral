@@ -63,12 +63,14 @@ export default function Section({
         </section>
       </div>
       {choice === "threads" && (
-        <div className="flex justify-center items-center relative top-12">
-          <Threads threads={userThreads} session={session} />
-        </div>
+        <section className="flex flex-col justify-center items-center w-full h-full relative top-12">
+          <div>
+            <Threads threads={userThreads} session={session} />
+          </div>
+        </section>
       )}
       {choice === "media" && (
-        <div className="flex justify-center items-center relative top-12">
+        <div className="flex justify-center items-center relative top-12 w-full h-full">
           <Threads threads={threadsWithMedia} session={session} />
         </div>
       )}

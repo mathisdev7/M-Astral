@@ -42,7 +42,7 @@ export default async function Home() {
 
   return (
     <main>
-      <div className="flex flex-row justify-center items-center w-full h-full">
+      <div className="flex flex-row justify-center items-center w-full h-full overflow-hidden">
         <div className="h-full w-full flex justify-center items-center flex-row">
           {threads.length > 0 ? (
             <div className="flex justify-center items-center relative">

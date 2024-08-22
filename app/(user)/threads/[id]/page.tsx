@@ -41,7 +41,7 @@ export default async function Post({ params }: { params: { id: string } }) {
     <main>
       <div className="flex-1 flex flex-row">
         <div className="h-full w-full flex justify-center flex-row">
-          <div className="relative right-24 hidden lg:block"></div>
+          <div className="relative right-24 hidden md:block"></div>
           <div className="flex justify-center items-center relative top-8">
             <ThreadDetails thread={thread} session={session} />
           </div>

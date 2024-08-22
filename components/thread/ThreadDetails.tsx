@@ -1,5 +1,11 @@
 "use client";
 import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -9,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
 import PrismaTypes from "@prisma/client";
-import { Heart, MessageSquare, MoreHorizontal } from "lucide-react";
+import { Heart, MessageSquare, X } from "lucide-react";
 import { Session } from "next-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -56,94 +62,109 @@ export default function ThreadDetails({
   };
   return (
     <main className="flex flex-col items-center justify-center w-full h-full">
-      <div className="flex flex-col items-center justify-center lg:w-full hover:bg-background/70 cursor-pointer z-30">
-        <div className="flex flex-col items-start justify-center lg:w-full h-full relative">
-          <div className="flex flex-row items-center justify-center gap-2 pb-1 relative right-10">
-            <Image
-              onClick={() => {
-                router.push(`/user/${post.author.username}`);
-              }}
-              src={
-                post.author.image
-                  ? post.author.image
-                  : "https://i0.wp.com/www.repol.copl.ulaval.ca/wp-content/uploads/2019/01/default-user-icon.jpg?ssl=1"
-              }
-              alt="author avatar"
-              width={20}
-              height={20}
-              className="rounded-full size-8 z-40"
-            />
-            <span
-              onClick={() => {
-                router.push(`/user/${post.author.username}`);
-              }}
-              className="text-sm font-bold dark:text-white text-black truncate relative"
-            >
-              {post.author.name}
+      <div className="flex flex-col items-center justify-center w-10/12 md:w-full hover:bg-background/70 cursor-pointer z-30">
+        <div className="flex flex-row items-center justify-center w-full gap-2 border-b-2">
+          <Image
+            onClick={() => {
+              router.push(`/user/${post.author.username}`);
+            }}
+            src={
+              post.author.image
+                ? post.author.image
+                : "https://i0.wp.com/www.repol.copl.ulaval.ca/wp-content/uploads/2019/01/default-user-icon.jpg?ssl=1"
+            }
+            alt="author avatar"
+            width={1000}
+            height={1000}
+            className="rounded-full size-10 self-start"
+          />
+          <div className="flex flex-col items-start justify-center w-full relative">
+            <div className="flex flex-row w-full gap-40 md:gap-64">
+              <span
+                onClick={() => {
+                  router.push(`/user/${post.author.username}`);
+                }}
+                className="text-sm font-bold dark:text-white text-black relative w-auto"
+              >
+                {post.author.name}
+              </span>
+              <span className="text-xs text-gray-500 relative top-1">
+                {formatRelativeTime(post.createdAt)} ago
+              </span>
+            </div>
+            <span className="text-sm dark:text-white text-black pb-4 py-2 w-72 md:w-80 relative bottom-2 text-wrap">
+              {post.content}
             </span>
-            <span className="text-xs text-gray-500 truncate relative right-px">
-              {formatRelativeTime(post.createdAt)} ago
-            </span>
-            <MoreHorizontal className="size-5 relative left-48 text-gray-500 bottom-2" />
+            {post.image ? (
+              <div className="w-full h-52">
+                <AlertDialog>
+                  <AlertDialogTrigger className="w-auto rounded-full">
+                    <Image
+                      src={post?.image || "/default.png"}
+                      alt="post image preview"
+                      width={1000}
+                      height={1000}
+                      className="w-80 h-52 object-cover relative bottom-4 rounded-xl"
+                    />
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <Image
+                      src={post?.image || "/default.png"}
+                      alt="post image full size"
+                      width={1000}
+                      height={1000}
+                      className="w-full"
+                    />
+                    <AlertDialogCancel className="w-auto h-auto">
+                      <X />
+                    </AlertDialogCancel>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            ) : null}
+            <div className="flex flex-row items-center justify-start gap-2 py-2 w-full relative bottom-4">
+              <div>
+                {post.likes.find((like) => like.userId === session?.user.id) ? (
+                  <Heart
+                    className="size-5 dark:text-[#ff0000]"
+                    fill="red"
+                    onClick={() => handleLike(post.id)}
+                  />
+                ) : (
+                  <Heart
+                    onClick={() => handleLike(post.id)}
+                    className="size-5 dark:text-white"
+                  />
+                )}
+              </div>
+              <div>
+                <span className="text-gray-500">‧</span>
+              </div>
+              <div>
+                <MessageSquare className="size-5 dark:text-white relative top-[0.5px]" />
+              </div>
+            </div>
+            <div className="flex flex-row items-center justify-start gap-1 py-2 w-full relative bottom-8">
+              <div>
+                <span className="text-xs text-gray-500 relative top-px">
+                  {post.likes.length} like{post.likes.length > 1 ? "s" : ""}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500 relative top-1">‧</span>
+              </div>
+              <div>
+                <span className="text-xs text-gray-500 relative top-px">
+                  {post.comments.length} comment
+                  {post.comments.length > 1 ? "s" : ""}
+                </span>
+              </div>
+            </div>
           </div>
-          <span className="text-sm dark:text-white text-black py-2 w-80 relative bottom-4">
-            {post.content}
-          </span>
         </div>
-        {post.image ? (
-          <div className="w-full h-52">
-            <Image
-              src={
-                post.image ||
-                "https://d3rqy6w6tyyf68.cloudfront.net/AcuCustom/Sitename/DAM/135/scw-126-a-deep-dive-into-a-goalkeepers-roles-1.png"
-              }
-              width={300}
-              height={200}
-              alt="post image"
-              className="w-full h-full object-cover rounded-lg relative bottom-4"
-            />
-          </div>
-        ) : null}
-        <div className="flex flex-row items-center justify-start gap-2 py-2 w-full relative bottom-4">
-          <div>
-            {post.likes.find((like) => like.userId === session?.user.id) ? (
-              <Heart
-                className="size-5 dark:text-[#ff0000]"
-                fill="red"
-                onClick={() => handleLike(post.id)}
-              />
-            ) : (
-              <Heart
-                onClick={() => handleLike(post.id)}
-                className="size-5 dark:text-white"
-              />
-            )}
-          </div>
-          <div>
-            <span className="text-gray-500">‧</span>
-          </div>
-          <div>
-            <MessageSquare className="size-5 dark:text-white relative top-[0.5px]" />
-          </div>
-        </div>
-        <div className="flex flex-row items-center justify-start gap-1 py-2 w-full relative bottom-8">
-          <div>
-            <span className="text-xs text-gray-500 relative top-px">
-              {post.likes.length} like{post.likes.length > 1 ? "s" : ""}
-            </span>
-          </div>
-          <div>
-            <span className="text-gray-500 relative top-1">‧</span>
-          </div>
-          <div>
-            <span className="text-xs text-gray-500 relative top-px">
-              {post.comments.length} comment
-              {post.comments.length > 1 ? "s" : ""}
-            </span>
-          </div>
-        </div>
+
         <Dialog>
-          <DialogTrigger className="dark:bg-[#333] bg-[#f0f0f0] dark:text-white text-black rounded-md p-2.5 text-sm relative bottom-4">
+          <DialogTrigger className="dark:bg-[#333] bg-[#f0f0f0] dark:text-white text-black rounded-md p-2.5 text-sm relative top-2">
             Write a comment
           </DialogTrigger>
 
@@ -179,19 +200,16 @@ export default function ThreadDetails({
             </DialogHeader>
           </DialogContent>
         </Dialog>
-        <div className="border-t-2 p-4">
-          <h1 className="text-2xl dark:text-white text-center text-black py-2 w-80 relative bottom-4">
-            Comments
-          </h1>
-          {post.comments.map((comment, index) => (
+        <div className="relative top-10 w-full">
+          {post.comments.map((comment) => (
             <div
-              className="flex flex-col items-start justify-center w-full relative"
               key={comment.id}
+              className="flex flex-col items-start justify-center w-full gap-2 relative bottom-4"
             >
-              <div className="flex flex-row items-center justify-center gap-2 pb-1 relative right-10">
+              <div className="flex flex-row items-center justify-center w-full gap-2">
                 <Image
                   onClick={() => {
-                    router.push(`/user/${post.author.username}`);
+                    router.push(`/user/${comment.author.username}`);
                   }}
                   src={
                     comment.author.image
@@ -199,50 +217,62 @@ export default function ThreadDetails({
                       : "https://i0.wp.com/www.repol.copl.ulaval.ca/wp-content/uploads/2019/01/default-user-icon.jpg?ssl=1"
                   }
                   alt="author avatar"
-                  width={20}
-                  height={20}
-                  className="rounded-full size-8"
+                  width={1000}
+                  height={1000}
+                  className="rounded-full size-10 self-start"
                 />
-                <span
-                  onClick={() => {
-                    router.push(`/user/${comment.author.username}`);
-                  }}
-                  className="text-sm font-bold dark:text-white text-black truncate relative w-auto"
-                >
-                  {comment.author.name}
-                </span>
-                <span className="text-xs text-gray-500 truncate relative right-px">
-                  {formatRelativeTime(comment.createdAt)} ago
-                </span>
-                <MoreHorizontal className="size-5 relative left-48 text-gray-500 bottom-2" />
-              </div>
-              <span className="text-sm dark:text-white text-black py-2 w-80 relative bottom-4">
-                {comment.content}
-              </span>
-              <div className="flex flex-row items-center justify-start gap-2 pb-2 w-full relative bottom-4">
-                <div>
-                  {comment.likes.find(
-                    (like) => like.userId === session?.user.id
-                  ) ? (
-                    <Heart
-                      className="size-5 dark:text-[#ff0000]"
-                      fill="red"
-                      onClick={() => handleCommentLike(comment.id)}
-                    />
-                  ) : (
-                    <Heart
-                      onClick={() => handleCommentLike(comment.id)}
-                      className="size-5 dark:text-white"
-                    />
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-row items-center justify-start gap-1 py-2 w-full relative bottom-8">
-                <div>
-                  <span className="text-xs text-gray-500 relative top-px">
-                    {comment.likes.length} like
-                    {comment.likes.length > 1 ? "s" : ""}
+                <div className="flex flex-col items-start justify-center w-full relative text-wrap overflow-hidden">
+                  <div className="flex flex-row w-full md:gap-56 gap-32">
+                    <span
+                      onClick={() => {
+                        router.push(`/user/${comment.author.username}`);
+                      }}
+                      className="text-sm font-bold dark:text-white text-black truncate relative w-auto"
+                    >
+                      {post.author.name}
+                    </span>
+                    <span className="text-xs text-gray-500 relative top-1">
+                      {formatRelativeTime(comment.createdAt)} ago
+                    </span>
+                  </div>
+                  <span className="text-sm dark:text-white text-black pb-4 py-2 w-56 md:w-56 relative bottom-2 text-wrap">
+                    {comment.content}
                   </span>
+                  <div className="flex flex-row items-center justify-start gap-2 py-2 w-full relative bottom-4">
+                    <div>
+                      {comment.likes.find(
+                        (like) => like.userId === session?.user.id
+                      ) ? (
+                        <Heart
+                          className="size-5 dark:text-[#ff0000]"
+                          fill="red"
+                          onClick={() => handleCommentLike(comment.id)}
+                        />
+                      ) : (
+                        <Heart
+                          onClick={() => handleCommentLike(comment.id)}
+                          className="size-5 dark:text-white"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <span className="text-gray-500">‧</span>
+                    </div>
+                    <div>
+                      <MessageSquare
+                        className="size-5 dark:text-white relative top-[0.5px]"
+                        onClick={() => router.push(`/threads/${comment.id}`)}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-row items-center justify-start gap-1 py-2 w-full relative bottom-8">
+                    <div>
+                      <span className="text-xs text-gray-500 relative top-px">
+                        {comment.likes.length} like
+                        {comment.likes.length > 1 ? "s" : ""}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

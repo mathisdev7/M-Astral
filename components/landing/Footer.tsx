@@ -6,13 +6,13 @@ export default function Footer() {
       <div className="flex h-full justify-center items-center">
         <div className="max-w-sm border-t p-2 flex relative flex-row space-x-4">
           <a href="/" className="flex relative flex-row space-x-4">
-            <span className="text-2xl relative font-bold px-12 p-2 border rounded-xl dark:hover:bg-[#333] hover:bg-gray-200">
+            <span className="text-2xl relative font-bold px-10 md:px-12 p-2 border rounded-xl dark:hover:bg-[#333] hover:bg-gray-200">
               <Home size={20} />
             </span>
           </a>
           <a
             href="/search"
-            className="flex relative flex-row space-x-4 px-12 p-2 border rounded-xl dark:hover:bg-[#333] hover:bg-gray-200"
+            className="flex relative flex-row space-x-4 px-10 md:px-12 p-2 border rounded-xl dark:hover:bg-[#333] hover:bg-gray-200"
           >
             <span className="text-2xl relative font-bold">
               <Search size={20} />
@@ -20,7 +20,7 @@ export default function Footer() {
           </a>
           <a
             href="/threads/create"
-            className="flex relative flex-row space-x-4 px-12 p-2 border rounded-xl dark:hover:bg-[#333] hover:bg-gray-200"
+            className="flex relative flex-row space-x-4 px-10 md:px-12 p-2 border rounded-xl dark:hover:bg-[#333] hover:bg-gray-200"
           >
             <span className="text-2xl relative font-bold">
               <SquarePen size={20} />
