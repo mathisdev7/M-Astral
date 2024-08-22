@@ -51,6 +51,9 @@ export default function EditForm({
       if (userData.username && userData.username.length > 15) {
         return toast.error("Username is too long.");
       }
+      if (userData.username) {
+        setUserData({ ...userData, username: userData.username.toLowerCase() });
+      }
       await editUser(user.id, userData);
       toast.success("Profile updated.");
       router.refresh();
