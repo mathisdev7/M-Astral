@@ -110,7 +110,7 @@ export default function EditForm({
               onChange={(e) =>
                 setUserData({
                   ...userData,
-                  username: e.target.value.padStart(1, "@"),
+                  username: e.target.value.padStart(1, "@").toLowerCase(),
                 })
               }
               value={userData.username as string}
