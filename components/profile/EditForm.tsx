@@ -36,6 +36,21 @@ export default function EditForm({
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
+      if (
+        userData.username &&
+        userData.username.slice(1, userData.username.length).includes("@")
+      ) {
+        return toast.error("Username cannot contain @.");
+      }
+      if (userData.username && userData.username.includes(" ")) {
+        return toast.error("Username cannot contain spaces.");
+      }
+      if (userData.username && userData.username.length < 2) {
+        return toast.error("Username is too short.");
+      }
+      if (userData.username && userData.username.length > 15) {
+        return toast.error("Username is too long.");
+      }
       await editUser(user.id, userData);
       toast.success("Profile updated.");
       router.refresh();
