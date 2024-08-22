@@ -26,6 +26,9 @@ export default function Username({ userId }: { userId: string }) {
         className=" dark:text-black text-white font-bold py-2 px-4 rounded mt-2"
         onClick={async () => {
           try {
+            if (username.length > 15) {
+              return toast.error("Username is too long.");
+            }
             if (username.length < 2) {
               return toast.error("Username is too short.");
             }
@@ -35,7 +38,7 @@ export default function Username({ userId }: { userId: string }) {
             if (username.slice(1, username.length).includes("@")) {
               return toast.error("Username cannot contain @.");
             }
-            await changeUsername(username, userId);
+            await changeUsername(username.toLowerCase(), userId);
             router.refresh();
           } catch (error) {
             toast.error("Username already exists.");
