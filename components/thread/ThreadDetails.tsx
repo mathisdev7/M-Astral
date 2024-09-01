@@ -93,7 +93,21 @@ export default function ThreadDetails({
               </span>
             </div>
             <span className="text-sm dark:text-white text-black pb-4 py-2 w-72 md:w-80 relative bottom-2 text-wrap">
-              {post.content}
+              {post.content.split(" ").map((word, index) => {
+                if (word.startsWith("#")) {
+                  return (
+                    <span
+                      key={index}
+                      className="text-blue-500 cursor-pointer z-50"
+                      onClick={() => router.push(`/hashtag/${word.slice(1)}`)}
+                    >
+                      {word}{" "}
+                    </span>
+                  );
+                } else {
+                  return <span key={index}>{word} </span>;
+                }
+              })}
             </span>
             {post.image ? (
               <div className="w-full h-52">
@@ -236,7 +250,24 @@ export default function ThreadDetails({
                     </span>
                   </div>
                   <span className="text-sm dark:text-white text-black pb-4 py-2 w-56 md:w-56 relative bottom-2 text-wrap">
-                    {comment.content}
+                    {comment.content.split(" ").map((word, index) => {
+                      if (word.startsWith("#")) {
+                        return (
+                          <span
+                            key={index}
+                            className="text-blue-500 cursor-pointer z-50"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(`/hashtag/${word.slice(1)}`);
+                            }}
+                          >
+                            {word}{" "}
+                          </span>
+                        );
+                      } else {
+                        return <span key={index}>{word} </span>;
+                      }
+                    })}
                   </span>
                   <div className="flex flex-row items-center justify-start gap-2 py-2 w-full relative bottom-4">
                     <div>

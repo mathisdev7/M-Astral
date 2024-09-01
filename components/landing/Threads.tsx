@@ -91,10 +91,27 @@ export const Threads = ({
                 </span>
               </div>
               <span
-                className="text-sm dark:text-white text-black w-72 pb-1 md:w-80 overflow-hidden whitespace-normal break-words"
                 onClick={() => router.push(`/threads/${post.id}`)}
+                className="text-sm dark:text-white text-black w-72 pb-1 md:w-80 overflow-hidden whitespace-normal break-words z-40"
               >
-                {post.content}
+                {post.content.split(" ").map((word, index) => {
+                  if (word.startsWith("#")) {
+                    return (
+                      <span
+                        key={index}
+                        className="text-blue-500 cursor-pointer z-50"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/hashtag/${word.slice(1)}`);
+                        }}
+                      >
+                        {word}{" "}
+                      </span>
+                    );
+                  } else {
+                    return <span key={index}>{word} </span>;
+                  }
+                })}
               </span>
               {post.image ? (
                 <div className="w-full h-52">
