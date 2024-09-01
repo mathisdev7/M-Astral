@@ -38,5 +38,6 @@ next-env.d.ts
 .env
 test.js
 lib/categorizeKeywords.ts
+test.ts
 
 prisma/migrations
