@@ -7,7 +7,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
 import PrismaTypes from "@prisma/client";
-import { BadgeCheck, Heart, MessageSquare, X } from "lucide-react";
+import {
+  BadgeCheck,
+  Heart,
+  LoaderCircle,
+  MessageSquare,
+  X,
+} from "lucide-react";
 import { Session } from "next-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -31,10 +37,13 @@ type ThreadWithAuthorAndComments = ThreadWithAuthor & {
 export const Threads = ({
   threads,
   session,
+  loading,
 }: {
   threads: ThreadWithAuthorAndComments[];
   session: Session | null;
+  loading?: boolean | undefined;
 }) => {
+  console.log(loading);
   const router = useRouter();
   const handleLike = (threadId: string) => {
     if (!session) return;
@@ -43,7 +52,11 @@ export const Threads = ({
   };
 
   return (
-    <main className="flex flex-col items-center justify-center md:w-full h-full first:pt-2 last:pb-11">
+    <main
+      className={`flex flex-col items-center justify-center md:w-full h-full first:pt-2 ${
+        loading ? "last:pb-24" : "last:pb-11"
+      }`}
+    >
       {threads.map((post) => (
         <div
           key={post.id}
@@ -187,6 +200,13 @@ export const Threads = ({
           </div>
         </div>
       ))}
+      {loading ? (
+        <div className="flex flex-row items-center justify-center w-full h-10">
+          <span className="text-sm dark:text-white text-black">
+            <LoaderCircle className="size-6 animate-spin" />
+          </span>
+        </div>
+      ) : null}
     </main>
   );
 };
