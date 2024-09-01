@@ -8,6 +8,7 @@ export const follow = async (authorId: string, userId: string) => {
     },
   });
   if (!userExists) {
+    prisma.$disconnect();
     throw new Error("User not found.");
   }
   const authorExists = await prisma.user.findUnique({
@@ -16,9 +17,11 @@ export const follow = async (authorId: string, userId: string) => {
     },
   });
   if (!authorExists) {
+    prisma.$disconnect();
     throw new Error("Author not found.");
   }
   if (authorId === userId) {
+    prisma.$disconnect();
     throw new Error("You cannot follow yourself.");
   }
   try {
@@ -34,6 +37,7 @@ export const follow = async (authorId: string, userId: string) => {
           id: followExists.id,
         },
       });
+      prisma.$disconnect();
       return false;
     }
     await prisma.follow.create({
@@ -43,8 +47,11 @@ export const follow = async (authorId: string, userId: string) => {
       },
     });
   } catch (error) {
+    prisma.$disconnect();
     console.error(error);
     throw new Error("Failed to follow user.");
   }
+  prisma.$disconnect();
+
   return true;
 };

@@ -17,6 +17,7 @@ import {
 import { Session } from "next-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { like } from "../action/like.action";
 import {
   Tooltip,
@@ -44,10 +45,16 @@ export const Threads = ({
   loading?: boolean | undefined;
 }) => {
   const router = useRouter();
-  const handleLike = (threadId: string) => {
+  const [threadsUpdated, setThreadsUpdated] = useState(threads);
+
+  const handleLike = async (threadId: string) => {
     if (!session) return;
-    like(session?.user.id as string, threadId);
-    router.refresh();
+    const likedThread = await like(session?.user.id as string, threadId);
+    setThreadsUpdated((prevThreads) =>
+      prevThreads.map((thread) =>
+        thread.id === likedThread.id ? likedThread : thread
+      )
+    );
   };
 
   return (
@@ -56,7 +63,7 @@ export const Threads = ({
         loading ? "last:pb-24" : "last:pb-11"
       }`}
     >
-      {threads.map((post) => (
+      {threadsUpdated.map((post) => (
         <div
           key={post.id}
           className="flex flex-col items-center justify-center w-full hover:bg-background/70 cursor-pointer z-30 p-1"

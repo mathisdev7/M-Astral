@@ -8,14 +8,25 @@ export const like = async (userId: string, threadId: string) => {
     },
   });
   if (!userExists) {
+    prisma.$disconnect();
     throw new Error("User not found.");
   }
   const threadExists = await prisma.thread.findUnique({
     where: {
       id: threadId,
     },
+    include: {
+      author: true,
+      likes: true,
+      comments: {
+        include: {
+          author: true,
+        },
+      },
+    },
   });
   if (!threadExists) {
+    prisma.$disconnect();
     throw new Error("Thread not found.");
   }
   const likeExists = await prisma.like.findFirst({
@@ -38,5 +49,6 @@ export const like = async (userId: string, threadId: string) => {
       },
     });
   }
-  return true;
+  prisma.$disconnect();
+  return threadExists;
 };

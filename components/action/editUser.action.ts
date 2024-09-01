@@ -8,6 +8,7 @@ export const editUser = async (userId: any, data: any) => {
     },
   });
   if (!userExists) {
+    prisma.$disconnect();
     throw new Error("User not found.");
   }
   await prisma.user.update({
@@ -30,5 +31,7 @@ export const editUser = async (userId: any, data: any) => {
       url: true,
     },
   });
+  prisma.$disconnect();
+
   return userUpdated;
 };

@@ -8,6 +8,7 @@ export const commentLike = async (userId: string, commentId: string) => {
     },
   });
   if (!userExists) {
+    prisma.$disconnect();
     throw new Error("User not found.");
   }
   const commentExists = await prisma.comment.findUnique({
@@ -16,6 +17,7 @@ export const commentLike = async (userId: string, commentId: string) => {
     },
   });
   if (!commentExists) {
+    prisma.$disconnect();
     throw new Error("Comment not found.");
   }
   try {
@@ -40,8 +42,10 @@ export const commentLike = async (userId: string, commentId: string) => {
       });
     }
   } catch (error) {
+    prisma.$disconnect();
     console.error(error);
     throw new Error("Failed to like comment.");
   }
+  prisma.$disconnect();
   return true;
 };

@@ -7,6 +7,7 @@ export const createThread = async (
   content: null | string
 ) => {
   if (!content) {
+    prisma.$disconnect();
     throw new Error("Content is required");
   }
   if (!image) {
@@ -16,6 +17,7 @@ export const createThread = async (
         content,
       },
     });
+    prisma.$disconnect();
     return thread;
   }
   const thread = await prisma.thread.create({
@@ -25,5 +27,6 @@ export const createThread = async (
       image: image,
     },
   });
+  prisma.$disconnect();
   return thread;
 };

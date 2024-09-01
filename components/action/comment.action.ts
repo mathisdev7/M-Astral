@@ -12,6 +12,7 @@ export const comment = async (
     },
   });
   if (!userExists) {
+    prisma.$disconnect();
     throw new Error("User not found.");
   }
   const threadExists = await prisma.thread.findUnique({
@@ -20,6 +21,7 @@ export const comment = async (
     },
   });
   if (!threadExists) {
+    prisma.$disconnect();
     throw new Error("Thread not found.");
   }
   try {
@@ -31,8 +33,10 @@ export const comment = async (
       },
     });
   } catch (error) {
+    prisma.$disconnect();
     console.error(error);
     throw new Error("Failed to create comment.");
   }
+  prisma.$disconnect();
   return true;
 };

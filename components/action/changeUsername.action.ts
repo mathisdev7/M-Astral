@@ -8,6 +8,7 @@ export const changeUsername = async (username: string, id: string) => {
     },
   });
   if (usernameExists) {
+    prisma.$disconnect();
     throw new Error("Username already exists.");
   }
   const user = await prisma.user.update({
@@ -18,5 +19,6 @@ export const changeUsername = async (username: string, id: string) => {
       username,
     },
   });
+  prisma.$disconnect();
   return user;
 };

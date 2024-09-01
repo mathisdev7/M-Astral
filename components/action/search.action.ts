@@ -20,5 +20,6 @@ export const search = async (search: string) => {
       ],
     },
   });
+  prisma.$disconnect();
   return users;
 };
