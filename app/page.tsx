@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 
 const POSTS_PER_PAGE = 10;
 
-export default async function Home({ page = 1 }) {
+export default async function Home() {
   const session = await auth();
   if (!session)
     return (
@@ -23,7 +23,7 @@ export default async function Home({ page = 1 }) {
     );
 
   const threads = await prisma.thread.findMany({
-    skip: (page - 1) * POSTS_PER_PAGE,
+    skip: 0,
     take: POSTS_PER_PAGE,
     orderBy: {
       createdAt: "desc",

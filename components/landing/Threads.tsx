@@ -43,7 +43,6 @@ export const Threads = ({
   session: Session | null;
   loading?: boolean | undefined;
 }) => {
-  console.log(loading);
   const router = useRouter();
   const handleLike = (threadId: string) => {
     if (!session) return;
@@ -100,7 +99,7 @@ export const Threads = ({
                   ) : null}
                 </span>
                 <span className="text-xs text-gray-500 relative top-1">
-                  {formatRelativeTime(post.createdAt)} ago
+                  {formatRelativeTime(new Date(post.createdAt))} ago
                 </span>
               </div>
               <span
