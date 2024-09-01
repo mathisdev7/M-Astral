@@ -8,10 +8,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import FollowSection from "@/components/user/FollowSection";
 import Section from "@/components/user/Section";
 import { prisma } from "@/lib/prisma";
-import { Link, MapPin, X } from "lucide-react";
+import { BadgeCheck, Link, MapPin, X } from "lucide-react";
 import Image from "next/image";
 
 export default async function User({
@@ -75,6 +81,27 @@ export default async function User({
       },
     },
   });
+  const userLikedThreads = await prisma.like.findMany({
+    where: {
+      userId: user.id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      thread: {
+        include: {
+          author: true,
+          likes: true,
+          comments: {
+            include: {
+              author: true,
+            },
+          },
+        },
+      },
+    },
+  });
   await prisma.$disconnect();
   if (!user) return null;
   return (
@@ -88,6 +115,18 @@ export default async function User({
               </h1>
               <h1 className="text-[0.85rem] font-light text-[#777]">
                 {user.username}
+                {user.verified ? (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <BadgeCheck className="inline-block size-4 ml-1 mb-1 text-blue-500" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>This user is verified by F'Threads</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ) : null}
               </h1>
             </section>
             <div className="w-28">
@@ -228,7 +267,11 @@ export default async function User({
           <FollowSection user={user} author={author} />
         </section>
       </div>
-      <Section session={session} userThreads={userThreads} />
+      <Section
+        session={session}
+        userThreads={userThreads}
+        userLikedThreads={userLikedThreads}
+      />
     </main>
   );
 }

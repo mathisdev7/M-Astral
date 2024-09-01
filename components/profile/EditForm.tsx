@@ -54,6 +54,24 @@ export default function EditForm({
       if (userData.username) {
         setUserData({ ...userData, username: userData.username.toLowerCase() });
       }
+      if (userData.bio && userData.bio.length > 160) {
+        return toast.error("Bio is too long.");
+      }
+      if (userData.name && userData.name.length > 50) {
+        return toast.error("Name is too long.");
+      }
+      if (userData.location && userData.location.length > 30) {
+        return toast.error("Location is too long.");
+      }
+      if (userData.url && userData.url.length > 50) {
+        return toast.error("URL is too long.");
+      }
+      const urlRegex = new RegExp(
+        "^(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})([/\\w .-]*)*/?$"
+      );
+      if (userData.url && !urlRegex.test(userData.url)) {
+        return toast.error("Invalid URL.");
+      }
       await editUser(user.id, userData);
       toast.success("Profile updated.");
       router.refresh();

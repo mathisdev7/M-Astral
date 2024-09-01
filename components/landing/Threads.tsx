@@ -7,11 +7,17 @@ import {
 } from "@/components/ui/alert-dialog";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
 import PrismaTypes from "@prisma/client";
-import { Heart, MessageSquare, X } from "lucide-react";
+import { BadgeCheck, Heart, MessageSquare, X } from "lucide-react";
 import { Session } from "next-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { like } from "../action/like.action";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 type ThreadWithAuthor = PrismaTypes.Thread & {
   author: PrismaTypes.User;
@@ -67,13 +73,25 @@ export const Threads = ({
                   className="text-sm font-bold dark:text-white text-black relative w-auto"
                 >
                   {post.author.name}
+                  {post.author.verified ? (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <BadgeCheck className="inline-block size-4 ml-1 mb-1 text-blue-500" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>This user is verified by F'Threads</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ) : null}
                 </span>
                 <span className="text-xs text-gray-500 relative top-1">
                   {formatRelativeTime(post.createdAt)} ago
                 </span>
               </div>
               <span
-                className="text-sm dark:text-white text-black w-72 pb-1 md:w-80 text-wrap"
+                className="text-sm dark:text-white text-black w-72 pb-1 md:w-80 overflow-hidden whitespace-normal break-words"
                 onClick={() => router.push(`/threads/${post.id}`)}
               >
                 {post.content}

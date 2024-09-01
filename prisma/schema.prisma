@@ -63,7 +63,6 @@ enum Category {
   CARS
   GADGETS
   MUSIC
-
 }
 
 model User {
@@ -76,6 +75,7 @@ model User {
   bio           String?
   url           String?
   location      String?
+  verified      Boolean   @default(false)
   role          Role      @default(USER)
   accounts      Account[]
   sessions      Session[]

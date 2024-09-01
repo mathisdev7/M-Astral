@@ -14,12 +14,21 @@ type ThreadWithAuthorAndComments = ThreadWithAuthor & {
   comments: PrismaTypes.Comment[];
 };
 
+type LikedThread = {
+  thread: ThreadWithAuthorAndComments;
+  userId: string;
+  id: string;
+  threadId: string;
+};
+
 export default function Section({
   session,
   userThreads,
+  userLikedThreads,
 }: {
   session: Session | null;
   userThreads: ThreadWithAuthorAndComments[];
+  userLikedThreads: LikedThread[];
 }) {
   const [choice, setChoice] = useState("threads");
   const threadsWithMedia = userThreads.filter((thread) => thread.image);
@@ -52,6 +61,16 @@ export default function Section({
           </span>
           <span
             className={`${
+              choice === "likes"
+                ? "border-b-2 dark:border-white border-black"
+                : "hover:scale-110 delay-100 cursor-pointer"
+            } transition-transform delay-500`}
+            onClick={() => setChoice("likes")}
+          >
+            Likes
+          </span>
+          <span
+            className={`${
               choice === "media"
                 ? "border-b-2 dark:border-white border-black"
                 : "hover:scale-110 delay-100 cursor-pointer"
@@ -66,6 +85,16 @@ export default function Section({
         <section className="flex flex-col justify-center items-center w-full h-full relative top-12">
           <div>
             <Threads threads={userThreads} session={session} />
+          </div>
+        </section>
+      )}
+      {choice === "likes" && (
+        <section className="flex flex-col justify-center items-center w-full h-full relative top-12">
+          <div>
+            <Threads
+              threads={userLikedThreads.map((thread) => thread.thread)}
+              session={session}
+            />
           </div>
         </section>
       )}
