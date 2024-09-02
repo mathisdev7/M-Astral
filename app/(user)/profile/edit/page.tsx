@@ -21,6 +21,7 @@ export default async function ProfileEdit() {
       url: true,
     },
   });
+  prisma.$disconnect();
   if (!user) return null;
   return (
     <main className="w-full h-full">

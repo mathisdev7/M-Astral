@@ -36,6 +36,7 @@ export default async function Post({ params }: { params: { id: string } }) {
       },
     },
   });
+  prisma.$disconnect();
   if (!thread) return null;
   return (
     <main>
