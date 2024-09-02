@@ -17,7 +17,7 @@ import {
 import { Session } from "next-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { like } from "../action/like.action";
 import {
   Tooltip,
@@ -46,6 +46,10 @@ export const Threads = ({
 }) => {
   const router = useRouter();
   const [threadsUpdated, setThreadsUpdated] = useState(threads);
+
+  useEffect(() => {
+    setThreadsUpdated(threads);
+  }, [threads]);
 
   const handleLike = async (threadId: string) => {
     if (!session) return;

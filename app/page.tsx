@@ -23,7 +23,6 @@ export default async function Home() {
     );
 
   const threads = await prisma.thread.findMany({
-    skip: 0,
     take: POSTS_PER_PAGE,
     orderBy: {
       createdAt: "desc",
