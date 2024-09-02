@@ -29,12 +29,14 @@ export const like = async (userId: string, threadId: string) => {
     prisma.$disconnect();
     throw new Error("Thread not found.");
   }
+
   const likeExists = await prisma.like.findFirst({
     where: {
       userId,
       threadId,
     },
   });
+
   if (likeExists) {
     await prisma.like.delete({
       where: {
@@ -49,6 +51,22 @@ export const like = async (userId: string, threadId: string) => {
       },
     });
   }
+
+  const updatedThread = await prisma.thread.findUnique({
+    where: {
+      id: threadId,
+    },
+    include: {
+      author: true,
+      likes: true,
+      comments: {
+        include: {
+          author: true,
+        },
+      },
+    },
+  });
+
   prisma.$disconnect();
-  return threadExists;
+  return updatedThread;
 };

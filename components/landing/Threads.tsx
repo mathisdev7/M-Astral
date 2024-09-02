@@ -49,12 +49,31 @@ export const Threads = ({
 
   const handleLike = async (threadId: string) => {
     if (!session) return;
-    const likedThread = await like(session?.user.id as string, threadId);
+
     setThreadsUpdated((prevThreads) =>
       prevThreads.map((thread) =>
-        thread.id === likedThread.id ? likedThread : thread
+        thread.id === threadId
+          ? {
+              ...thread,
+              likes: thread.likes.some(
+                (like) => like.userId === session.user.id
+              )
+                ? thread.likes.filter((like) => like.userId !== session.user.id)
+                : [
+                    ...thread.likes,
+                    {
+                      id: "temp-id",
+                      threadId: thread.id,
+                      userId: session.user.id,
+                      createdAt: new Date(),
+                    },
+                  ],
+            }
+          : thread
       )
     );
+
+    await like(session?.user.id as string, threadId);
   };
 
   return (
