@@ -47,7 +47,16 @@ export default async function User({
     },
   });
 
-  if (!user) return await prisma.$disconnect();
+  if (!user) {
+    await prisma.$disconnect();
+    return (
+      <div>
+        <h1 className="text-2xl dark:text-white text-black text-center">
+          User not found
+        </h1>
+      </div>
+    );
+  }
   const userFollowers = await prisma.follow.findMany({
     where: {
       followingId: user.id,
@@ -135,8 +144,8 @@ export default async function User({
                   <Image
                     src={user?.image || "/default.png"}
                     alt="user profile picture"
-                    width={200}
-                    height={200}
+                    width={800}
+                    height={800}
                     className="rounded-full size-20"
                   />
                 </AlertDialogTrigger>
@@ -144,8 +153,8 @@ export default async function User({
                   <Image
                     src={user?.image || "/default.png"}
                     alt="user profile picture"
-                    width={200}
-                    height={200}
+                    width={800}
+                    height={800}
                     className="w-full"
                   />
                   <AlertDialogCancel className="w-auto h-auto">

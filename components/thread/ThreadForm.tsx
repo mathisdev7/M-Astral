@@ -56,7 +56,7 @@ export default function ThreadForm() {
         );
       }
       toast.success("Thread created");
-      router.push("/");
+      window.location.href = "/";
     } catch (error) {
       toast.error("Failed to create thread");
       console.error(error);

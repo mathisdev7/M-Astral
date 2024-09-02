@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import NextAuth, { Session } from "next-auth";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import DiscordProvider from "next-auth/providers/discord";
 
 const prisma = new PrismaClient();
 const prismaAdapter = PrismaAdapter(prisma);
@@ -18,6 +19,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Github({
       clientId: env.GITHUB_CLIENT_ID,
       clientSecret: env.GITHUB_CLIENT_SECRET,
+    }),
+    DiscordProvider({
+      clientId: process.env.DISCORD_CLIENT_ID,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET,
     }),
   ],
   callbacks: {

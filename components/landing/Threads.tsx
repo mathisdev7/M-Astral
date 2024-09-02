@@ -136,7 +136,7 @@ export const Threads = ({
                 onClick={() => router.push(`/threads/${post.id}`)}
                 className="text-sm dark:text-white text-black w-72 pb-1 md:w-80 overflow-hidden whitespace-normal break-words z-40"
               >
-                {post.content.split(" ").map((word, index) => {
+                {post.content.split(/\s+/).map((word, index) => {
                   if (word.startsWith("#")) {
                     return (
                       <span
@@ -149,6 +149,35 @@ export const Threads = ({
                       >
                         {word}{" "}
                       </span>
+                    );
+                  } else if (word.startsWith("@")) {
+                    return (
+                      <span
+                        key={index}
+                        className="text-blue-500 cursor-pointer z-50"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/user/@${word.slice(1)}`);
+                        }}
+                      >
+                        {word}{" "}
+                      </span>
+                    );
+                  } else if (
+                    word.startsWith("https://") ||
+                    word.startsWith("http://")
+                  ) {
+                    return (
+                      <a
+                        key={index}
+                        href={word}
+                        onClick={(e) => e.stopPropagation()}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-500 cursor-pointer z-50"
+                      >
+                        {word}{" "}
+                      </a>
                     );
                   } else {
                     return <span key={index}>{word} </span>;
