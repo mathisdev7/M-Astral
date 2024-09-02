@@ -37,6 +37,11 @@ const nextConfig = {
         hostname: "randomuser.me",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "media.discordapp.net",
+        port: "",
+      },
     ],
   },
 };

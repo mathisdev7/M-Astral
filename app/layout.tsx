@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   icons: [
     {
       rel: "icon",
-      url: "/favicon.ico",
+      url: "https://media.discordapp.net/attachments/972878173488447568/1280029206553563269/icon_2.png?ex=66d69798&is=66d54618&hm=bb23dd05c795fb1346e6eee950816cf2978b1e284e3a3853a05ceebaedfd4b2c&=&format=webp&quality=lossless",
     },
   ],
 };
