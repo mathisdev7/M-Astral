@@ -5,19 +5,30 @@ import {
   AlertDialogContent,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
 import PrismaTypes from "@prisma/client";
 import {
   BadgeCheck,
+  Flag,
   Heart,
   LoaderCircle,
   MessageSquare,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
   X,
 } from "lucide-react";
 import { Session } from "next-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { deleteThread } from "../action/deleteThread.action";
 import { like } from "../action/like.action";
 import { notification } from "../action/notification.action";
 import {
@@ -55,6 +66,15 @@ export const Threads = ({
   useEffect(() => {
     setThreadsUpdated(threads);
   }, [threads]);
+
+  const handleDelete = async (threadId: string) => {
+    if (!session) return;
+    const updatedThreads = threadsUpdated.filter(
+      (thread) => thread.id !== threadId
+    );
+    setThreadsUpdated(updatedThreads);
+    await deleteThread(threadId);
+  };
 
   const handleLike = async (threadId: string, userId: string) => {
     if (!session) return;
@@ -124,7 +144,7 @@ export const Threads = ({
               className="rounded-full size-10 self-start"
             />
             <div className="flex flex-col items-start justify-center w-full relative">
-              <div className="flex flex-row w-full gap-48 md:gap-64">
+              <div className="flex flex-row w-full gap-40 md:gap-64">
                 <span
                   onClick={() => {
                     router.push(`/user/${post.author.username}`);
@@ -145,9 +165,36 @@ export const Threads = ({
                     </TooltipProvider>
                   ) : null}
                 </span>
-                <span className="text-xs text-gray-500 relative top-1">
-                  {formatRelativeTime(new Date(post.createdAt))} ago
-                </span>
+                <div className="flex flex-row items-center gap-2">
+                  <span className="text-xs text-gray-500 relative top-1">
+                    {formatRelativeTime(new Date(post.createdAt))} ago
+                  </span>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="relative top-1">
+                      <MoreHorizontal className="size-5" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {post.authorId === session?.user.id ? (
+                        <div>
+                          <DropdownMenuItem>
+                            <Pencil className="size-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(post.id)}
+                          >
+                            <Trash2 className="size-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </div>
+                      ) : null}
+                      <DropdownMenuItem>
+                        <Flag className="size-4 mr-2" />
+                        Report
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
               <span
                 onClick={() => router.push(`/threads/${post.id}`)}
