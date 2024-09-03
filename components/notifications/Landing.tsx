@@ -71,7 +71,7 @@ export default function Landing({
             </p>
           </div>
           {notification.image && (
-            <div className="group relative">
+            <div className="group relative w-full">
               <Image
                 alt="notification image"
                 src={notification.image}
