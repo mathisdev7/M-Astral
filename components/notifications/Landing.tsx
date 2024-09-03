@@ -28,7 +28,7 @@ export default function Landing({
   const router = useRouter();
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full space-y-3 relative top-2">
+    <div className="flex flex-col items-center justify-center w-full h-full space-y-3 relative top-2 pb-12">
       {notifications.map((notification: NotificationWithUserAndAuthor) => (
         <div
           key={notification.id}
