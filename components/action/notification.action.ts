@@ -53,7 +53,7 @@ export const notification = async (
           authorId,
           threadId,
           content: `${author?.username} liked your post.`,
-          image: thread?.image ? thread.image : author?.image,
+          image: thread?.image,
         },
       });
       break;

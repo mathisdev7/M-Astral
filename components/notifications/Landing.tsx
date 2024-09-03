@@ -49,11 +49,15 @@ export default function Landing({
               }}
               className="rounded-full w-8 h-8 object-cover"
             />
-            <p className="text-sm font-bold dark:text-white text-black">
+            <p className="text-sm dark:text-white text-black">
               {notification.content.split(" ").map((word, index) => {
                 if (word.startsWith("@")) {
                   return (
-                    <span key={index} className="font-bold">
+                    <span
+                      key={index}
+                      onClick={() => router.push(`/user/${word.slice(1)}`)}
+                      className="font-bold text-blue-500 cursor-pointer"
+                    >
                       {word}{" "}
                     </span>
                   );
@@ -73,7 +77,7 @@ export default function Landing({
                 src={notification.image}
                 width={1000}
                 height={1000}
-                className="rounded-xl w-full h-56 object-cover group-hover:opacity-40 transition-opacity duration-300"
+                className="rounded-xl w-full h-56 object-contain group-hover:opacity-40 transition-opacity duration-300"
               ></Image>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
                 <div className="text-center">
