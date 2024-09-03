@@ -171,7 +171,7 @@ export const Threads = ({
                   </span>
                   <DropdownMenu>
                     <DropdownMenuTrigger className="relative top-1">
-                      <MoreHorizontal className="size-5" />
+                      <MoreHorizontal className="size-5 text-gray-400" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       {post.authorId === session?.user.id ? (
