@@ -3,7 +3,9 @@ import { Follow, User } from "@prisma/client";
 
 import { Flag, UserRoundMinus, UserRoundPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { follow } from "../action/follow.action";
+import { notification } from "../action/notification.action";
 import { Button } from "../ui/button";
 
 type UserWithFollowersAndFollowing = User & {
@@ -19,9 +21,34 @@ export default function FollowSection({
   author: User | null;
 }) {
   const router = useRouter();
+  const [isFollowing, setIsFollowing] = useState<boolean>(
+    user.followers.some(
+      (follower: Follow) => follower.followingId === author?.id
+    )
+      ? true
+      : false
+  );
+  const [isFollowed, setIsFollowed] = useState<boolean>(
+    user.following.some(
+      (following: Follow) => following.followerId === author?.id
+    )
+      ? true
+      : false
+  );
   const handleFollow = async () => {
     if (!author) return;
-    follow(author?.id, user.id);
+    if (isFollowing) {
+      setIsFollowing(!isFollowing);
+    } else {
+      if (isFollowed) {
+        setIsFollowed(true);
+      }
+      setIsFollowing(!isFollowing);
+    }
+    const isAFollow = await follow(author?.id, user.id);
+    if (isAFollow) {
+      notification(author?.id as string, user?.id, "follow");
+    }
     router.refresh();
   };
   return (
@@ -39,10 +66,7 @@ export default function FollowSection({
           onClick={handleFollow}
           className="dark:bg-[#333] bg-[#f0f0f0] dark:text-white text-black rounded-md px-2.5 py-0.5 text-sm dark:hover:bg-none hover:bg-slate-400"
         >
-          {author?.id &&
-          user.followers.some(
-            (follower: Follow) => follower.followingId === author.id
-          ) ? (
+          {author?.id && isFollowing ? (
             <>
               <UserRoundMinus size={16} className="mr-1" />
               <span>Unfollow</span>
@@ -50,10 +74,7 @@ export default function FollowSection({
           ) : (
             <>
               <UserRoundPlus size={16} className="mr-1" />
-              {author?.id &&
-              user.following.some(
-                (following: Follow) => following.followerId === author.id
-              ) ? (
+              {author?.id && isFollowed ? (
                 <span>Follow back</span>
               ) : (
                 <span>Follow</span>

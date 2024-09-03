@@ -86,8 +86,8 @@ model User {
   comments      Comment[]
   commentLikes  CommentLike[]
   preferences   UserPreference[]
-  notifications Notification[]
-
+  notifications Notification[] @relation("UserNotifications")
+  notificationsMade Notification[] @relation("AuthorNotifications")
   @@map("users")
 }
 
@@ -106,8 +106,12 @@ model Thread {
 model Notification {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  viewed    Boolean  @default(false)
+  user      User     @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation("AuthorNotifications", fields: [authorId], references: [id], onDelete: Cascade)
   content   String
+  threadId  String?
   image     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

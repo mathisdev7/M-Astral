@@ -43,6 +43,8 @@ export const like = async (userId: string, threadId: string) => {
         id: likeExists.id,
       },
     });
+    prisma.$disconnect();
+    return false;
   } else {
     await prisma.like.create({
       data: {
@@ -52,21 +54,6 @@ export const like = async (userId: string, threadId: string) => {
     });
   }
 
-  const updatedThread = await prisma.thread.findUnique({
-    where: {
-      id: threadId,
-    },
-    include: {
-      author: true,
-      likes: true,
-      comments: {
-        include: {
-          author: true,
-        },
-      },
-    },
-  });
-
   prisma.$disconnect();
-  return updatedThread;
+  return true;
 };

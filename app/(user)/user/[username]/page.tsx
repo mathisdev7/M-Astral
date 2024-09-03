@@ -20,35 +20,62 @@ import { prisma } from "@/lib/prisma";
 import { BadgeCheck, Link, MapPin, X } from "lucide-react";
 import Image from "next/image";
 
+const fetchData = async (username: string) => {
+  const session = await auth();
+  const authorPromise = session
+    ? prisma.user.findUnique({ where: { id: session.user.id } })
+    : Promise.resolve(null);
+  const userPromise = prisma.user.findUnique({
+    where: { username: decodeURIComponent(username) },
+    include: {
+      followers: {
+        include: {
+          follower: true,
+          following: true,
+        },
+      },
+      following: {
+        include: {
+          following: true,
+          follower: true,
+        },
+      },
+      threads: {
+        orderBy: { createdAt: "desc" },
+        include: {
+          author: true,
+          likes: true,
+          comments: { include: { author: true } },
+        },
+      },
+      likes: {
+        include: {
+          thread: {
+            include: {
+              author: true,
+              likes: true,
+              comments: { include: { author: true } },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const [author, user] = await Promise.all([authorPromise, userPromise]);
+
+  return { author, user, session };
+};
+
 export default async function User({
   params,
 }: {
   params: { username: string };
 }) {
-  const session = await auth();
-  let author;
-  if (session) {
-    author = await prisma.user.findUnique({
-      where: {
-        id: session?.user.id,
-      },
-    });
-  } else {
-    author = null;
-  }
-  const usernameDecoded = decodeURIComponent(params.username);
-  const user = await prisma.user.findUnique({
-    where: {
-      username: usernameDecoded,
-    },
-    include: {
-      followers: true,
-      following: true,
-    },
-  });
+  const { author, user, session } = await fetchData(params.username);
 
   if (!user) {
-    await prisma.$disconnect();
+    console.error("User not found or error fetching user.");
     return (
       <div>
         <h1 className="text-2xl dark:text-white text-black text-center">
@@ -57,62 +84,7 @@ export default async function User({
       </div>
     );
   }
-  const userFollowers = await prisma.follow.findMany({
-    where: {
-      followingId: user.id,
-    },
-    include: {
-      follower: true,
-    },
-  });
-  const userFollowing = await prisma.follow.findMany({
-    where: {
-      followerId: user.id,
-    },
-    include: {
-      following: true,
-    },
-  });
-  const userThreads = await prisma.thread.findMany({
-    where: {
-      authorId: user.id,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      author: true,
-      likes: true,
-      comments: {
-        include: {
-          author: true,
-        },
-      },
-    },
-  });
-  const userLikedThreads = await prisma.like.findMany({
-    where: {
-      userId: user.id,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      thread: {
-        include: {
-          author: true,
-          likes: true,
-          comments: {
-            include: {
-              author: true,
-            },
-          },
-        },
-      },
-    },
-  });
-  await prisma.$disconnect();
-  if (!user) return null;
+
   return (
     <main>
       <div className="flex flex-row justify-center items-center w-full h-full p-4">
@@ -124,7 +96,7 @@ export default async function User({
               </h1>
               <h1 className="text-[0.85rem] font-light text-[#777]">
                 {user.username}
-                {user.verified ? (
+                {user.verified && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -135,7 +107,7 @@ export default async function User({
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                ) : null}
+                )}
               </h1>
             </section>
             <div className="w-28">
@@ -201,9 +173,10 @@ export default async function User({
                   {user.followers.length > 1 ? "s" : ""}
                 </h1>
                 <ScrollArea className="flex flex-col justify-center items-center p-2 w-full h-64">
-                  {userFollowers.map((follower) => (
+                  {user.followers.map((follower) => (
                     <a
                       href={`/user/${follower.follower.username}`}
+                      key={follower.follower.id}
                       className="flex flex-row justify-center items-center space-x-2 p-2.5 w-full h-full"
                     >
                       <div>
@@ -242,14 +215,15 @@ export default async function User({
                   {user.following.length}
                 </h1>
                 <ScrollArea className="flex flex-col justify-center items-center p-2 w-full h-64">
-                  {userFollowing.map((following) => (
+                  {user.following.map((following) => (
                     <a
-                      href={`/user/${following.following.username}`}
+                      key={following.id}
+                      href={`/user/${following.follower.username}`}
                       className="flex flex-row justify-center items-center space-x-2 p-2.5 w-full h-full"
                     >
                       <div>
                         <Image
-                          src={following.following.image || "/default.png"}
+                          src={following.follower.image || "/default.png"}
                           alt="user profile picture"
                           width={50}
                           height={50}
@@ -258,10 +232,10 @@ export default async function User({
                       </div>
                       <div className="flex flex-col justify-center items-start">
                         <h1 className="text-sm dark:text-white text-black">
-                          {following.following.name}
+                          {following.follower.name}
                         </h1>
                         <h1 className="text-[0.85rem] font-light text-[#777]">
-                          {following.following.username}
+                          {following.follower.username}
                         </h1>
                       </div>
                     </a>
@@ -278,8 +252,8 @@ export default async function User({
       </div>
       <Section
         session={session}
-        userThreads={userThreads}
-        userLikedThreads={userLikedThreads}
+        userThreads={user.threads}
+        userLikedThreads={user.likes}
       />
     </main>
   );

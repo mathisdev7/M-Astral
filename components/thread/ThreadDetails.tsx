@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
 import PrismaTypes from "@prisma/client";
-import { Heart, MessageSquare, X } from "lucide-react";
+import { BadgeCheck, Heart, MessageSquare, X } from "lucide-react";
 import { Session } from "next-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -23,9 +23,16 @@ import { useState } from "react";
 import { comment as commentAction } from "../action/comment.action";
 import { commentLike } from "../action/commentLike.action";
 import { like } from "../action/like.action";
+import { notification } from "../action/notification.action";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 type CommentWithAuthorAndLikes = PrismaTypes.Comment & {
   author: PrismaTypes.User;
@@ -56,8 +63,9 @@ export default function ThreadDetails({
     commentLike(session?.user.id as string, commentId);
     router.refresh();
   };
-  const handleComment = async (threadId: string) => {
+  const handleComment = async (threadId: string, authorId: string) => {
     await commentAction(session?.user.id as string, threadId, comment);
+    notification(session?.user.id as string, authorId, "comment", threadId);
     router.refresh();
   };
   return (
@@ -87,6 +95,18 @@ export default function ThreadDetails({
                 className="text-sm font-bold dark:text-white text-black relative w-auto"
               >
                 {post.author.name}
+                {post.author.verified ? (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <BadgeCheck className="inline-block size-4 ml-1 mb-1 text-blue-500" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>This user is verified by F'Threads</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ) : null}
               </span>
               <span className="text-xs text-gray-500 relative top-1">
                 {formatRelativeTime(post.createdAt)} ago
@@ -204,7 +224,7 @@ export default function ThreadDetails({
                   <Button
                     type="submit"
                     size="sm"
-                    onClick={() => handleComment(post.id)}
+                    onClick={() => handleComment(post.id, post.author.id)}
                     className="px-3 dark:text-black text-white"
                   >
                     Comment

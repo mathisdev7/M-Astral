@@ -19,6 +19,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { like } from "../action/like.action";
+import { notification } from "../action/notification.action";
 import {
   Tooltip,
   TooltipContent,
@@ -46,13 +47,21 @@ export const Threads = ({
 }) => {
   const router = useRouter();
   const [threadsUpdated, setThreadsUpdated] = useState(threads);
+  const [isAnimating, setIsAnimating] = useState({
+    status: false,
+    threadId: "",
+  });
 
   useEffect(() => {
     setThreadsUpdated(threads);
   }, [threads]);
 
-  const handleLike = async (threadId: string) => {
+  const handleLike = async (threadId: string, userId: string) => {
     if (!session) return;
+    setIsAnimating({
+      status: true,
+      threadId,
+    });
 
     setThreadsUpdated((prevThreads) =>
       prevThreads.map((thread) =>
@@ -76,8 +85,16 @@ export const Threads = ({
           : thread
       )
     );
-
-    await like(session?.user.id as string, threadId);
+    setTimeout(() => {
+      setIsAnimating({
+        status: false,
+        threadId,
+      });
+    }, 250);
+    const likeState = await like(session?.user.id as string, threadId);
+    if (likeState) {
+      notification(session?.user.id as string, userId, "like", threadId);
+    }
   };
 
   return (
@@ -213,20 +230,27 @@ export const Threads = ({
               ) : null}
               <div className="flex flex-row items-center justify-start gap-2 pt-0.5 w-full">
                 <div className="w-auto h-auto">
-                  {post.likes.find(
-                    (like) => like.userId === session?.user.id
-                  ) ? (
-                    <Heart
-                      className="size-5 dark:text-[#ff0000]"
-                      fill="red"
-                      onClick={() => handleLike(post.id)}
-                    />
-                  ) : (
-                    <Heart
-                      onClick={() => handleLike(post.id)}
-                      className="size-5 dark:text-white"
-                    />
-                  )}
+                  <Heart
+                    onClick={() => handleLike(post.id, post.authorId)}
+                    className={`size-5 transition-transform duration-300 ${
+                      isAnimating.threadId === post.id && isAnimating.status
+                        ? "scale-125"
+                        : "scale-100"
+                    } ${
+                      post.likes.find(
+                        (like) => like.userId === session?.user.id
+                      ) !== undefined
+                        ? "text-[#ff0000]"
+                        : "dark:text-white"
+                    }`}
+                    fill={
+                      post.likes.find(
+                        (like) => like.userId === session?.user.id
+                      ) !== undefined
+                        ? "red"
+                        : "none"
+                    }
+                  />
                 </div>
                 <div>
                   <span className="text-gray-500">‧</span>

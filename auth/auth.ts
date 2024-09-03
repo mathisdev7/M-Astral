@@ -2,9 +2,9 @@ import { env } from "@/env";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import NextAuth, { Session } from "next-auth";
+import DiscordProvider from "next-auth/providers/discord";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
-import DiscordProvider from "next-auth/providers/discord";
 
 const prisma = new PrismaClient();
 const prismaAdapter = PrismaAdapter(prisma);
@@ -30,12 +30,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.user.id = user.id;
       session.user.role = user.role;
       session.user.username = user.username;
+      prisma.$disconnect();
       return session;
     },
     async jwt({ token, user }: { token: any; user: any }) {
       token.id = user.id;
       token.role = user.role;
       token.username = user.username;
+      prisma.$disconnect();
       return token;
     },
   },

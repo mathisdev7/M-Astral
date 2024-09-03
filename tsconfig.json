@@ -28,7 +28,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/api/**/*.ts",
-    "test.ts"
+    "test.ts",
+    "lib/**/*.ts",
+    "lib/**/*.graphql"
   ],
   "exclude": ["node_modules"]
 }
