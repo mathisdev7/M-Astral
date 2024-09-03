@@ -77,7 +77,7 @@ export default function Landing({
                 src={notification.image}
                 width={1000}
                 height={1000}
-                className="rounded-xl w-full h-56 object-contain group-hover:opacity-40 transition-opacity duration-300"
+                className="rounded-xl w-full h-56 group-hover:opacity-40 transition-opacity duration-300"
               ></Image>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
                 <div className="text-center">
