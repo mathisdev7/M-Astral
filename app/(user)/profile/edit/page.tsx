@@ -19,6 +19,7 @@ export default async function ProfileEdit() {
       bio: true,
       location: true,
       url: true,
+      private: true,
     },
   });
   prisma.$disconnect();

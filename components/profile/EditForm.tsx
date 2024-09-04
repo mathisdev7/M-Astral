@@ -1,12 +1,15 @@
 "use client";
 import { User } from "@prisma/client";
+import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { editUser } from "../action/editUser.action";
+import { setPrivate } from "../action/private.action";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { Switch } from "../ui/switch";
 import { Textarea } from "../ui/textarea";
 import EditAvatar from "./EditAvatar";
 
@@ -22,6 +25,7 @@ export default function EditForm({
     bio: User["bio"];
     location: User["location"];
     url: User["url"];
+    private: User["private"];
   };
   session: any;
 }) {
@@ -32,7 +36,9 @@ export default function EditForm({
     bio: user.bio,
     location: user.location,
     url: user.url,
+    private: user.private,
   });
+  const [isLoading, setIsLoading] = useState(false);
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
@@ -80,9 +86,32 @@ export default function EditForm({
       toast.error("An error occurred.");
     }
   };
+  const handlePrivate = async (e: any) => {
+    e.preventDefault();
+    setIsLoading(true);
+    await setPrivate(user.id);
+    toast.success("Private account updated.");
+    setUserData({ ...userData, private: !userData.private });
+    setIsLoading(false);
+  };
   return (
     <form className="h-full w-full flex justify-center items-center flex-col gap-3">
       <EditAvatar session={session} user={user} />
+      <div className="dark:bg-[#333]/40 bg-[#272829] w-auto h-8 rounded-xl flex flex-row justify-center items-center gap-10 px-20 py-6">
+        <Label htmlFor="prvate" className="font-bold text-white">
+          Private Account
+        </Label>
+        {!isLoading ? (
+          <Switch
+            onClick={(e) => handlePrivate(e)}
+            id="private"
+            name="private"
+            checked={userData.private}
+          />
+        ) : (
+          <LoaderCircle className="w-6 h-6 animate-spin " />
+        )}
+      </div>
       <div className="w-full h-auto flex flex-col justify-center items-center gap-6">
         <div className="dark:bg-[#333]/40 bg-[#272829] w-auto h-auto rounded-xl flex flex-col gap-5 px-11 py-4">
           <h1 className="self-center text-2xl font-bold text-white">

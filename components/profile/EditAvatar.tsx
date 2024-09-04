@@ -41,7 +41,7 @@ export default function EditAvatar({
           className="rounded-full size-12 relative right-px"
         />
         <div className="flex flex-col justify-center items-center">
-          <div className="text-white text-sm font-bold">
+          <div className="text-white text-sm font-bold w-20">
             {session.user.name}
           </div>
           <div className="text-white text-xs truncate w-20">
