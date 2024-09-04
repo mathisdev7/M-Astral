@@ -75,6 +75,7 @@ model User {
   bio           String?
   url           String?
   location      String?
+  private       Boolean   @default(false)
   verified      Boolean   @default(false)
   role          Role      @default(USER)
   accounts      Account[]

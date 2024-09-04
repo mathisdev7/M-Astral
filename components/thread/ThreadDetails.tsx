@@ -160,16 +160,48 @@ export default function ThreadDetails({
               </div>
             </div>
             <span className="text-sm dark:text-white text-black pb-4 py-2 w-72 md:w-80 relative bottom-2 text-wrap">
-              {post.content.split(" ").map((word, index) => {
+              {post.content.split(/\s+/).map((word, index) => {
                 if (word.startsWith("#")) {
                   return (
                     <span
                       key={index}
                       className="text-blue-500 cursor-pointer z-50"
-                      onClick={() => router.push(`/hashtag/${word.slice(1)}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/hashtag/${word.slice(1)}`);
+                      }}
                     >
                       {word}{" "}
                     </span>
+                  );
+                } else if (word.startsWith("@")) {
+                  return (
+                    <span
+                      key={index}
+                      className="text-blue-500 cursor-pointer z-50"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/user/@${word.slice(1)}`);
+                      }}
+                    >
+                      {word}{" "}
+                    </span>
+                  );
+                } else if (
+                  word.startsWith("https://") ||
+                  word.startsWith("http://")
+                ) {
+                  return (
+                    <a
+                      key={index}
+                      href={word}
+                      onClick={(e) => e.stopPropagation()}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-blue-500 cursor-pointer z-50"
+                    >
+                      {word}{" "}
+                    </a>
                   );
                 } else {
                   return <span key={index}>{word} </span>;

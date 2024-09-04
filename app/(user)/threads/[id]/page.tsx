@@ -38,6 +38,19 @@ export default async function Post({ params }: { params: { id: string } }) {
   });
   prisma.$disconnect();
   if (!thread) return null;
+  if (thread.author.id !== session.user.id && thread.author.private) {
+    return (
+      <main>
+        <div className="flex flex-row justify-center items-center w-full h-full">
+          <div className="h-full w-full flex justify-center items-center flex-row">
+            <h1 className="text-2xl font-bold dark:text-white text-black relative top-6">
+              This user's threads are private.
+            </h1>
+          </div>
+        </div>
+      </main>
+    );
+  }
   return (
     <main>
       <div className="flex-1 flex flex-row">

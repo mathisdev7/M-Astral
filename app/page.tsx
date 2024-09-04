@@ -27,6 +27,33 @@ export default async function Home() {
     orderBy: {
       createdAt: "desc",
     },
+    where: {
+      OR: [
+        {
+          author: {
+            private: false,
+          },
+        },
+        {
+          author: {
+            followers: {
+              some: {
+                followingId: session.user.id,
+              },
+            },
+          },
+        },
+        {
+          author: {
+            following: {
+              some: {
+                followerId: session.user.id,
+              },
+            },
+          },
+        },
+      ],
+    },
     include: {
       author: true,
       likes: true,

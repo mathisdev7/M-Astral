@@ -17,7 +17,8 @@ import {
 import FollowSection from "@/components/user/FollowSection";
 import Section from "@/components/user/Section";
 import { prisma } from "@/lib/prisma";
-import { BadgeCheck, Link, MapPin, X } from "lucide-react";
+import { Follow } from "@prisma/client";
+import { BadgeCheck, Link, Lock, MapPin, X } from "lucide-react";
 import Image from "next/image";
 
 const fetchData = async (username: string) => {
@@ -73,7 +74,6 @@ export default async function User({
   params: { username: string };
 }) {
   const { author, user, session } = await fetchData(params.username);
-
   if (!user) {
     console.error("User not found or error fetching user.");
     return (
@@ -84,6 +84,17 @@ export default async function User({
       </div>
     );
   }
+  const isFollowing = user?.followers.some(
+    (follower: Follow) => follower.followingId === author?.id
+  )
+    ? true
+    : false;
+  const isFollowed = user?.following.some(
+    (following: Follow) => following.followerId === author?.id
+  )
+    ? true
+    : false;
+  console.log(isFollowed, isFollowing);
 
   return (
     <main>
@@ -158,103 +169,134 @@ export default async function User({
           <p className="text-sm dark:text-white text-black relative top-2 w-60">
             {user.bio || "No biography"}
           </p>
-          <p className="text-[0.9rem] text-[#777] relative top-5 w-60">
-            <AlertDialog>
-              <AlertDialogTrigger className="w-auto">
-                <span>
-                  {user.followers.length} follower
-                  {user.followers.length > 1 ? "s" : ""} •
-                </span>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <h1 className="text-xl dark:text-white text-black text-center">
-                  <span className="font-bold">{user.name}</span> •{" "}
-                  {user.followers.length} follower
-                  {user.followers.length > 1 ? "s" : ""}
-                </h1>
-                <ScrollArea className="flex flex-col justify-center items-center p-2 w-full h-64">
-                  {user.followers.map((follower) => (
-                    <a
-                      href={`/user/${follower.follower.username}`}
-                      key={follower.follower.id}
-                      className="flex flex-row justify-center items-center space-x-2 p-2.5 w-full h-full"
-                    >
-                      <div>
-                        <Image
-                          src={follower.follower.image || "/default.png"}
-                          alt="user profile picture"
-                          width={50}
-                          height={50}
-                          className="rounded-full size-10"
-                        />
-                      </div>
-                      <div className="flex flex-col justify-center items-start">
-                        <h1 className="text-sm dark:text-white text-black">
-                          {follower.follower.name}
-                        </h1>
-                        <h1 className="text-[0.85rem] font-light text-[#777]">
-                          {follower.follower.username}
-                        </h1>
-                      </div>
-                    </a>
-                  ))}
-                </ScrollArea>
-                <AlertDialogCancel className="w-auto h-auto">
-                  <X />
-                </AlertDialogCancel>
-              </AlertDialogContent>
-            </AlertDialog>
-            <AlertDialog>
-              <AlertDialogTrigger className="w-auto">
-                &nbsp;
-                <span>{user.following.length} following</span>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <h1 className="text-xl dark:text-white text-black text-center">
-                  <span className="font-bold">{user.name}</span> • Following{" "}
-                  {user.following.length}
-                </h1>
-                <ScrollArea className="flex flex-col justify-center items-center p-2 w-full h-64">
-                  {user.following.map((following) => (
-                    <a
-                      key={following.id}
-                      href={`/user/${following.follower.username}`}
-                      className="flex flex-row justify-center items-center space-x-2 p-2.5 w-full h-full"
-                    >
-                      <div>
-                        <Image
-                          src={following.follower.image || "/default.png"}
-                          alt="user profile picture"
-                          width={50}
-                          height={50}
-                          className="rounded-full size-10"
-                        />
-                      </div>
-                      <div className="flex flex-col justify-center items-start">
-                        <h1 className="text-sm dark:text-white text-black">
-                          {following.follower.name}
-                        </h1>
-                        <h1 className="text-[0.85rem] font-light text-[#777]">
-                          {following.follower.username}
-                        </h1>
-                      </div>
-                    </a>
-                  ))}
-                </ScrollArea>
-                <AlertDialogCancel className="w-auto h-auto">
-                  <X />
-                </AlertDialogCancel>
-              </AlertDialogContent>
-            </AlertDialog>{" "}
+          <p className="text-[0.9rem] text-[#777] relative top-5 w-60 space-x-1">
+            {(isFollowed && isFollowing) ||
+            user.id === session?.user.id ||
+            user.private ? (
+              <AlertDialog>
+                <AlertDialogTrigger className="w-auto">
+                  <span>
+                    {user.followers.length} follower
+                    {user.followers.length > 1 ? "s" : ""} •{" "}
+                  </span>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <h1 className="text-xl dark:text-white text-black text-center">
+                    <span className="font-bold">{user.name}</span> •{" "}
+                    {user.followers.length} follower
+                    {user.followers.length > 1 ? "s" : ""}{" "}
+                  </h1>
+                  <ScrollArea className="flex flex-col justify-center items-center p-2 w-full h-64">
+                    {user.followers.map((follower) => (
+                      <a
+                        href={`/user/${follower.following.username}`}
+                        key={follower.following.id}
+                        className="flex flex-row justify-center items-center space-x-2 p-2.5 w-full h-full"
+                      >
+                        <div>
+                          <Image
+                            src={follower.following.image || "/default.png"}
+                            alt="user profile picture"
+                            width={50}
+                            height={50}
+                            className="rounded-full size-10"
+                          />
+                        </div>
+                        <div className="flex flex-col justify-center items-start">
+                          <h1 className="text-sm dark:text-white text-black">
+                            {follower.following.name}
+                          </h1>
+                          <h1 className="text-[0.85rem] font-light text-[#777]">
+                            {follower.following.username}
+                          </h1>
+                        </div>
+                      </a>
+                    ))}
+                  </ScrollArea>
+                  <AlertDialogCancel className="w-auto h-auto">
+                    <X />
+                  </AlertDialogCancel>
+                </AlertDialogContent>
+              </AlertDialog>
+            ) : (
+              <span className="text-[0.9rem] text-[#777]">
+                {user.followers.length} follower
+                {user.followers.length > 1 ? "s" : ""} •
+              </span>
+            )}
+            {(isFollowed && isFollowing) ||
+            user.id === session?.user.id ||
+            user.private ? (
+              <AlertDialog>
+                <AlertDialogTrigger className="w-auto">
+                  {" "}
+                  <span>{user.following.length} following</span>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <h1 className="text-xl dark:text-white text-black text-center">
+                    {" "}
+                    <span className="font-bold">{user.name}</span> •{" "}
+                    {user.following.length} following
+                  </h1>
+                  <ScrollArea className="flex flex-col justify-center items-center p-2 w-full h-64">
+                    {user.following.map((follower) => (
+                      <a
+                        href={`/user/${follower.follower.username}`}
+                        key={follower.follower.id}
+                        className="flex flex-row justify-center items-center space-x-2 p-2.5 w-full h-full"
+                      >
+                        <div>
+                          <Image
+                            src={follower.follower.image || "/default.png"}
+                            alt="user profile picture"
+                            width={50}
+                            height={50}
+                            className="rounded-full size-10"
+                          />
+                        </div>
+                        <div className="flex flex-col justify-center items-start">
+                          <h1 className="text-sm dark:text-white text-black">
+                            {follower.follower.name}
+                          </h1>
+                          <h1 className="text-[0.85rem] font-light text-[#777]">
+                            {follower.follower.username}
+                          </h1>
+                        </div>
+                      </a>
+                    ))}
+                  </ScrollArea>
+                  <AlertDialogCancel className="w-auto h-auto">
+                    <X />
+                  </AlertDialogCancel>
+                </AlertDialogContent>
+              </AlertDialog>
+            ) : (
+              <span className="text-[0.9rem] text-[#777]">
+                {" "}
+                {user.followers.length} following
+              </span>
+            )}
           </p>
           <FollowSection user={user} author={author} />
         </section>
       </div>
-      <Section
-        session={session}
-        userThreads={user.threads}
-        userLikedThreads={user.likes}
-      />
+      {(isFollowed && isFollowing) ||
+      user.id === session?.user.id ||
+      user.private ? (
+        <Section
+          session={session}
+          userThreads={user.threads}
+          userLikedThreads={user.likes}
+        />
+      ) : (
+        <div className="flex flex-col justify-center items-center w-full relative gap-4 top-7 p-1">
+          <div className="border-t w-3/4 md:w-1/4"></div>
+          <Lock className="size-10" />
+          <p className="text-xl dark:text-white text-black">
+            This user's threads are private.
+          </p>
+        </div>
+      )}
     </main>
   );
 }

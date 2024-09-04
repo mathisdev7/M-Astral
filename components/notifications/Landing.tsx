@@ -55,7 +55,9 @@ export default function Landing({
                   return (
                     <span
                       key={index}
-                      onClick={() => router.push(`/user/${word.slice(1)}`)}
+                      onClick={() =>
+                        router.push(`/user/@${word.slice(1).replace("!", "")}`)
+                      }
                       className="font-bold text-blue-500 cursor-pointer"
                     >
                       {word}{" "}
