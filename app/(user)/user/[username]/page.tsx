@@ -285,7 +285,7 @@ export default async function User({
             ) : (
               <span className="text-[0.9rem] text-[#777]">
                 {" "}
-                {user.followers.length} following
+                {user.following.length} following
               </span>
             )}
           </p>
