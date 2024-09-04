@@ -107,7 +107,6 @@ export default async function User({
   )
     ? true
     : false;
-  console.log(isFollowed, isFollowing);
 
   return (
     <main>
@@ -185,7 +184,7 @@ export default async function User({
           <p className="text-[0.9rem] text-[#777] relative top-5 w-60 space-x-1">
             {(isFollowed && isFollowing) ||
             user.id === session?.user.id ||
-            user.private ? (
+            !user.private ? (
               <AlertDialog>
                 <AlertDialogTrigger className="w-auto">
                   <span>
@@ -239,7 +238,7 @@ export default async function User({
             )}
             {(isFollowed && isFollowing) ||
             user.id === session?.user.id ||
-            user.private ? (
+            !user.private ? (
               <AlertDialog>
                 <AlertDialogTrigger className="w-auto">
                   {" "}
@@ -295,7 +294,7 @@ export default async function User({
       </div>
       {(isFollowed && isFollowing) ||
       user.id === session?.user.id ||
-      user.private ? (
+      !user.private ? (
         <Section
           session={session}
           userThreads={user.threads}
