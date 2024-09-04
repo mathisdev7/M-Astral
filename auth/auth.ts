@@ -5,6 +5,7 @@ import NextAuth, { Session } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import Auth0Provider from "next-auth/providers/auth0";
 
 const prisma = new PrismaClient();
 const prismaAdapter = PrismaAdapter(prisma);
@@ -23,6 +24,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID,
       clientSecret: process.env.DISCORD_CLIENT_SECRET,
+    }),
+    Auth0Provider({
+      clientId: process.env.AUTH0_CLIENT_ID,
+      clientSecret: process.env.AUTH0_CLIENT_SECRET,
+      issuer: process.env.AUTH0_ISSUER,
     }),
   ],
   callbacks: {

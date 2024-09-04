@@ -15,16 +15,32 @@ import {
 } from "@/components/ui/dialog";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
 import PrismaTypes from "@prisma/client";
-import { BadgeCheck, Heart, MessageSquare, X } from "lucide-react";
+import {
+  BadgeCheck,
+  Flag,
+  Heart,
+  MessageSquare,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  X,
+} from "lucide-react";
 import { Session } from "next-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { comment as commentAction } from "../action/comment.action";
 import { commentLike } from "../action/commentLike.action";
+import { deleteThread } from "../action/deleteThread.action";
 import { like } from "../action/like.action";
 import { notification } from "../action/notification.action";
 import { Button } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import {
@@ -68,6 +84,11 @@ export default function ThreadDetails({
     notification(session?.user.id as string, authorId, "comment", threadId);
     router.refresh();
   };
+  const handleDelete = async (threadId: string) => {
+    if (!session) return;
+    await deleteThread(threadId);
+    router.push("/");
+  };
   return (
     <main className="flex flex-col items-center justify-center w-full h-full">
       <div className="flex flex-col items-center justify-center w-10/12 md:w-full hover:bg-background/70 cursor-pointer z-30">
@@ -108,9 +129,35 @@ export default function ThreadDetails({
                   </TooltipProvider>
                 ) : null}
               </span>
-              <span className="text-xs text-gray-500 relative top-1">
-                {formatRelativeTime(post.createdAt)} ago
-              </span>
+              <div className="flex flex-row items-center gap-2">
+                <span className="text-xs text-gray-500 relative top-1">
+                  {formatRelativeTime(new Date(post.createdAt))} ago
+                </span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="relative top-1">
+                    <MoreHorizontal className="size-5 text-gray-400" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {post.authorId === session?.user.id ||
+                    session?.user.role === "ADMIN" ? (
+                      <div>
+                        <DropdownMenuItem>
+                          <Pencil className="size-4 mr-2" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDelete(post.id)}>
+                          <Trash2 className="size-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </div>
+                    ) : null}
+                    <DropdownMenuItem>
+                      <Flag className="size-4 mr-2" />
+                      Report
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
             <span className="text-sm dark:text-white text-black pb-4 py-2 w-72 md:w-80 relative bottom-2 text-wrap">
               {post.content.split(" ").map((word, index) => {

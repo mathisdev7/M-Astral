@@ -12,6 +12,9 @@ export const env = createEnv({
     DISCORD_CLIENT_SECRET: z.string().min(1),
     CLOUD_NAME: z.string().min(1),
     AUTH_SECRET: z.string().min(1),
+    AUTH0_CLIENT_ID: z.string().min(1),
+    AUTH0_CLIENT_SECRET: z.string().min(1),
+    AUTH0_ISSUER: z.string().min(1),
   },
   client: {},
   // If you're using Next.js < 13.4.4, you'll need to specify the runtimeEnv manually
@@ -25,6 +28,9 @@ export const env = createEnv({
     DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
     CLOUD_NAME: process.env.CLOUD_NAME,
     AUTH_SECRET: process.env.AUTH_SECRET,
+    AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
+    AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
+    AUTH0_ISSUER: process.env.AUTH0_ISSUER,
   },
   // For Next.js >= 13.4.4, you only need to destructure client variables:
   // experimental__runtimeEnv: {

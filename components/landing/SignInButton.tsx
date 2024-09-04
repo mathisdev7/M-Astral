@@ -66,6 +66,20 @@ const SignInButton = () => {
                 Login with discord
               </Button>
             </DropdownMenuItem>
+            <DropdownMenuItem className="bg-transparent hover:bg-transparent flex flex-col space-y-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                formAction={async () => {
+                  "use server";
+                  await signIn("auth0");
+                }}
+                className="relative border-transparent"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                Login with auth0
+              </Button>
+            </DropdownMenuItem>
           </form>
         </DropdownMenuContent>
       </DropdownMenu>
