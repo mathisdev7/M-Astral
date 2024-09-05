@@ -1,7 +1,9 @@
 "use server";
 import { auth } from "@/auth/auth";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { prisma } from "@/lib/prisma";
 import { Bell, Home, Search, SquarePen } from "lucide-react";
+import ThreadForm from "../thread/ThreadForm";
 
 export default async function Footer() {
   const session = await auth();
@@ -28,14 +30,18 @@ export default async function Footer() {
               <Search size={15} />
             </span>
           </a>
-          <a
-            href="/threads/create"
-            className="flex relative flex-row space-x-4 px-8 md:px-10 p-2 border rounded-xl dark:hover:bg-[#333] hover:bg-gray-200"
-          >
-            <span className="text-2xl relative font-bold">
-              <SquarePen size={15} />
-            </span>
-          </a>
+          <span className="flex relative flex-row space-x-4 px-8 md:px-10 p-2 border rounded-xl dark:hover:bg-[#333] hover:bg-gray-200">
+            <Dialog>
+              <DialogTrigger asChild>
+                <span className="text-2xl relative font-bold">
+                  <SquarePen size={15} />
+                </span>
+              </DialogTrigger>
+              <DialogContent className="w-5/6 md:w-full rounded-xl">
+                <ThreadForm />
+              </DialogContent>
+            </Dialog>
+          </span>
           <a
             href="/notifications"
             className="flex relative flex-row space-x-4 px-8 md:px-10 p-2 border rounded-xl dark:hover:bg-[#333] hover:bg-gray-200"

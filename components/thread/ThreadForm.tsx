@@ -6,13 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { Fragment } from "react";
 import { toast } from "sonner";
 
 export default function ThreadForm() {
   const session = useSession();
-  const router = useRouter();
   if (!session.data) {
     return (
       <div className="flex flex-row justify-center items-center w-full h-full">
@@ -63,8 +60,8 @@ export default function ThreadForm() {
     }
   };
   return (
-    <Fragment>
-      <h1 className="text-2xl">Create a new thread</h1>
+    <div>
+      <h1 className="text-2xl text-center">Create a new thread</h1>
 
       <form
         onSubmit={async (event) => await handleSubmit(event)}
@@ -82,6 +79,6 @@ export default function ThreadForm() {
           Create thread
         </Button>
       </form>
-    </Fragment>
+    </div>
   );
 }

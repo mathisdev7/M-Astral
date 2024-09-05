@@ -19,6 +19,7 @@ export const search = async (search: string) => {
         },
       ],
     },
+    take: 8,
   });
   prisma.$disconnect();
   return users;
