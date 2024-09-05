@@ -73,7 +73,7 @@ export const notification = async (
         await prisma.notification.findFirst({
           where: {
             userId,
-            content: `Hey ${user?.username}! ${author?.username} followed you.`,
+            content: `${author?.username} followed you.`,
           },
         });
       if (notificationAlreadyExistsFollow) {
@@ -83,7 +83,7 @@ export const notification = async (
         data: {
           userId,
           authorId,
-          content: `Hey ${user?.username}! ${author?.username} followed you.`,
+          content: `${author?.username} followed you.`,
         },
       });
       break;

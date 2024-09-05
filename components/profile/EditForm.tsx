@@ -6,6 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { editUser } from "../action/editUser.action";
 import { setPrivate } from "../action/private.action";
+import { setProfileViews } from "../action/profileViews.action";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -26,6 +27,7 @@ export default function EditForm({
     location: User["location"];
     url: User["url"];
     private: User["private"];
+    profileViews: User["profileViews"];
   };
   session: any;
 }) {
@@ -37,8 +39,10 @@ export default function EditForm({
     location: user.location,
     url: user.url,
     private: user.private,
+    profileViews: user.profileViews,
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingPrivate, setIsLoadingPrivate] = useState(false);
+  const [isLoadingProfileViews, setIsLoadingProfileViews] = useState(false);
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
@@ -88,29 +92,56 @@ export default function EditForm({
   };
   const handlePrivate = async (e: any) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsLoadingPrivate(true);
     await setPrivate(user.id);
     toast.success("Private account updated.");
     setUserData({ ...userData, private: !userData.private });
-    setIsLoading(false);
+    setIsLoadingPrivate(false);
+  };
+  const handleProfileViews = async (e: any) => {
+    e.preventDefault();
+    setIsLoadingProfileViews(true);
+    await setProfileViews(user.id);
+    toast.success("Profile views updated.");
+    setUserData({ ...userData, profileViews: !userData.profileViews });
+    setIsLoadingProfileViews(false);
   };
   return (
     <form className="h-full w-full flex justify-center items-center flex-col gap-3">
       <EditAvatar session={session} user={user} />
-      <div className="dark:bg-[#333]/40 bg-[#272829] w-auto h-8 rounded-xl flex flex-row justify-center items-center gap-10 px-20 py-6">
-        <Label htmlFor="prvate" className="font-bold text-white">
-          Private Account
-        </Label>
-        {!isLoading ? (
-          <Switch
-            onClick={(e) => handlePrivate(e)}
-            id="private"
-            name="private"
-            checked={userData.private}
-          />
-        ) : (
-          <LoaderCircle className="w-6 h-6 animate-spin " />
-        )}
+      <div className="dark:bg-[#333]/40 bg-[#272829] w-auto h-8 rounded-xl flex flex-col justify-center items-center gap-2 px-24 py-10">
+        <div className="flex flex-row gap-2 justify-center items-center">
+          <Label htmlFor="prvate" className="font-bold text-white">
+            Private Account
+          </Label>
+          {!isLoadingPrivate ? (
+            <Switch
+              onClick={(e) => handlePrivate(e)}
+              id="private"
+              name="private"
+              checked={userData.private}
+            />
+          ) : (
+            <LoaderCircle className="w-6 h-6 animate-spin " />
+          )}
+        </div>
+        <div className="w-1/2 border border-[#272829] px-20" />
+        <div className="flex flex-row gap-2 justify-center items-center">
+          <Label htmlFor="profileViews" className="font-bold text-white">
+            Profile Views
+          </Label>
+          {!isLoadingProfileViews ? (
+            <Switch
+              onClick={(e) => handleProfileViews(e)}
+              id="profileViews"
+              name="profileViews"
+              className="relative left-[0.60rem]"
+              checked={userData.profileViews}
+            />
+          ) : (
+            <LoaderCircle className="w-6 h-6 animate-spin " />
+          )}
+        </div>
       </div>
       <div className="w-full h-auto flex flex-col justify-center items-center gap-6">
         <div className="dark:bg-[#333]/40 bg-[#272829] w-auto h-auto rounded-xl flex flex-col gap-5 px-11 py-4">

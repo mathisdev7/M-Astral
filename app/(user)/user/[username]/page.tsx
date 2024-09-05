@@ -97,6 +97,27 @@ export default async function User({
       </main>
     );
   }
+  if (author?.profileViews && user.profileViews && author.id !== user.id) {
+    const lastNotification = await prisma.notification.findFirst({
+      where: {
+        userId: user.id,
+        authorId: author.id,
+        content: `${author.username} visited your profile`,
+      },
+    });
+    if (
+      !lastNotification ||
+      lastNotification?.createdAt < new Date(Date.now() - 86400000)
+    ) {
+      await prisma.notification.create({
+        data: {
+          userId: user.id,
+          authorId: author.id,
+          content: `${author.username} visited your profile`,
+        },
+      });
+    }
+  }
   const isFollowing = user?.followers.some(
     (follower: Follow) => follower.followingId === author?.id
   )
