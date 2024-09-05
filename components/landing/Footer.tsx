@@ -30,18 +30,18 @@ export default async function Footer() {
               <Search size={15} />
             </span>
           </a>
-          <span className="flex relative flex-row space-x-4 px-8 md:px-10 p-2 border rounded-xl dark:hover:bg-[#333] hover:bg-gray-200">
-            <Dialog>
-              <DialogTrigger asChild>
+          <Dialog>
+            <DialogTrigger asChild>
+              <span className="flex relative flex-row space-x-4 px-8 md:px-10 p-2 border rounded-xl dark:hover:bg-[#333] hover:bg-gray-200">
                 <span className="text-2xl relative font-bold">
                   <SquarePen size={15} />
                 </span>
-              </DialogTrigger>
-              <DialogContent className="w-5/6 md:w-full rounded-xl">
-                <ThreadForm />
-              </DialogContent>
-            </Dialog>
-          </span>
+              </span>
+            </DialogTrigger>
+            <DialogContent className="w-5/6 md:w-full rounded-xl">
+              <ThreadForm />
+            </DialogContent>
+          </Dialog>
           <a
             href="/notifications"
             className="flex relative flex-row space-x-4 px-8 md:px-10 p-2 border rounded-xl dark:hover:bg-[#333] hover:bg-gray-200"
