@@ -78,7 +78,7 @@ export default function EditForm({
         return toast.error("URL is too long.");
       }
       const urlRegex = new RegExp(
-        "^(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})([/\\w .-]*)*/?$"
+        "^(https?://)?([\\w.-]+)\\.([a-z]{2,6})([\\w./-]*)?$"
       );
       if (userData.url && !urlRegex.test(userData.url)) {
         return toast.error("Invalid URL.");
