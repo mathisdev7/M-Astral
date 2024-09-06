@@ -2,7 +2,6 @@
 import { auth } from "@/auth/auth";
 import { HomePage } from "@/components/landing/LazyLoading";
 import { ThreadProvider } from "@/components/landing/ThreadContext";
-import Username from "@/components/landing/Username";
 import { prisma } from "@/lib/prisma";
 
 const POSTS_PER_PAGE = 10;
@@ -64,16 +63,6 @@ export default async function Home() {
       },
     },
   });
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.user.id,
-    },
-  });
-
-  await prisma.$disconnect();
-
-  if (user?.id && !user.username) return <Username userId={user.id} />;
 
   return (
     <main>

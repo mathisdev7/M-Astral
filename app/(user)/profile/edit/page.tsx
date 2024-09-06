@@ -21,6 +21,7 @@ export default async function ProfileEdit() {
       url: true,
       private: true,
       profileViews: true,
+      verified: true,
     },
   });
   prisma.$disconnect();

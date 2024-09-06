@@ -4,7 +4,10 @@ import { ThemeProvider } from "@/components/ui/themeProvider";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 
+import { auth } from "@/auth/auth";
 import Footer from "@/components/landing/Footer";
+import Username from "@/components/landing/Username";
+import { prisma } from "@/lib/prisma";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -38,6 +41,38 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+  if (session) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: session?.user.id,
+      },
+    });
+
+    await prisma.$disconnect();
+
+    if (user?.id && !user.username)
+      return (
+        <html lang="en" suppressHydrationWarning>
+          <head>
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1.0"
+            />
+          </head>
+          <body className="w-full min-h-screen dark:bg-[#0A0A0A] bg-white">
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem={true}
+            >
+              <Header />
+              <Username userId={user.id} />
+            </ThemeProvider>
+          </body>
+        </html>
+      );
+  }
   return (
     <html lang="en" suppressHydrationWarning>
       <head>

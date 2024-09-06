@@ -22,6 +22,7 @@ import {
   MessageSquare,
   MoreHorizontal,
   Pencil,
+  Share,
   Trash2,
   X,
 } from "lucide-react";
@@ -154,6 +155,16 @@ export default function ThreadDetails({
                     <DropdownMenuItem>
                       <Flag className="size-4 mr-2" />
                       Report
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        navigator.clipboard.writeText(
+                          window.location.href + "threads/" + post.id
+                        )
+                      }
+                    >
+                      <Share className="size-4 mr-2" />
+                      Share
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

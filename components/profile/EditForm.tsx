@@ -27,6 +27,7 @@ export default function EditForm({
     location: User["location"];
     url: User["url"];
     private: User["private"];
+    verified: User["verified"];
     profileViews: User["profileViews"];
   };
   session: any;
@@ -109,10 +110,10 @@ export default function EditForm({
   return (
     <form className="h-full w-full flex justify-center items-center flex-col gap-3">
       <EditAvatar session={session} user={user} />
-      <div className="dark:bg-[#333]/40 bg-[#272829] w-auto h-8 rounded-xl flex flex-col justify-center items-center gap-2 px-24 py-10">
+      <div className="dark:bg-[#333]/40 bg-[#272829] w-auto h-auto rounded-xl flex flex-col justify-center items-center gap-2 px-24 py-3">
         <div className="flex flex-row gap-2 justify-center items-center">
           <Label htmlFor="prvate" className="font-bold text-white">
-            Private Account
+            Private account
           </Label>
           {!isLoadingPrivate ? (
             <Switch
@@ -128,7 +129,7 @@ export default function EditForm({
         <div className="w-1/2 border border-[#272829] px-20" />
         <div className="flex flex-row gap-2 justify-center items-center">
           <Label htmlFor="profileViews" className="font-bold text-white">
-            Profile Views
+            Profile views
           </Label>
           {!isLoadingProfileViews ? (
             <Switch
