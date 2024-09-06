@@ -56,6 +56,12 @@
    npm run dev
    ```
 
+   or
+
+   ```bash
+   pnpm run dev
+   ```
+
    Access the application at [http://localhost:3000](http://localhost:3000) to see it in action.
 
 ## Contributing
