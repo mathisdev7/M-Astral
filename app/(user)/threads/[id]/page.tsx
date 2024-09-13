@@ -24,6 +24,7 @@ export default async function ThreadPage({
         </div>
       </main>
     );
+
   const thread = await prisma.thread.findUnique({
     where: {
       id: params.id,
@@ -42,9 +43,28 @@ export default async function ThreadPage({
       },
     },
   });
-  prisma.$disconnect();
+
   if (!thread) return null;
-  if (thread.author.id !== session.user.id && thread.author.private) {
+
+  const isFollowing = await prisma.follow.findFirst({
+    where: {
+      followerId: session.user.id,
+      followingId: thread.authorId,
+    },
+  });
+
+  const isFollowed = await prisma.follow.findFirst({
+    where: {
+      followerId: thread.authorId,
+      followingId: session.user.id,
+    },
+  });
+
+  const isAuthor = thread.author.id === session.user.id;
+  const isVisible =
+    !thread.author.private || (isFollowing && isFollowed) || isAuthor;
+
+  if (!isVisible) {
     return (
       <main>
         <div className="flex flex-row justify-center items-center w-full h-full">
@@ -57,6 +77,7 @@ export default async function ThreadPage({
       </main>
     );
   }
+
   return (
     <main>
       <div className="flex-1 flex flex-row">

@@ -211,7 +211,7 @@ const ThreadCard = ({
                     <BadgeCheck className="inline-block size-4 ml-1 mb-1 text-blue-500" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>This user is verified by F'Threads</p>
+                    <p>This user is verified by M'Astral</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

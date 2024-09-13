@@ -1,6 +1,6 @@
-# Contributing to F'Threads
+# Contributing to M'Astral
 
-Thank you for considering contributing to **F'Threads**! We appreciate your interest in improving our project. Here’s how you can get involved:
+Thank you for considering contributing to **M'Astral**! We appreciate your interest in improving our project. Here’s how you can get involved:
 
 ## How to Contribute
 
@@ -70,4 +70,4 @@ If you need help with contributing or have any questions, feel free to [open an 
 
 ---
 
-Thank you for contributing to **F'Threads**!
+Thank you for contributing to **M'Astral**!

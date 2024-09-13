@@ -34,22 +34,26 @@ export default async function Home() {
           },
         },
         {
-          author: {
-            followers: {
-              some: {
-                followingId: session.user.id,
+          AND: [
+            {
+              author: {
+                followers: {
+                  some: {
+                    followingId: session.user.id,
+                  },
+                },
               },
             },
-          },
-        },
-        {
-          author: {
-            following: {
-              some: {
-                followerId: session.user.id,
+            {
+              author: {
+                following: {
+                  some: {
+                    followerId: session.user.id,
+                  },
+                },
               },
             },
-          },
+          ],
         },
       ],
     },
