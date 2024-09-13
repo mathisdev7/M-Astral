@@ -4,7 +4,13 @@ import { auth } from "@/auth/auth";
 import ThreadDetails from "@/components/thread/ThreadDetails";
 import { prisma } from "@/lib/prisma";
 
-export default async function Post({ params }: { params: { id: string } }) {
+type ThreadPageProps = {
+  params: Readonly<{ id: string }>;
+};
+
+export default async function ThreadPage({
+  params,
+}: Readonly<ThreadPageProps>) {
   const session = await auth();
   if (!session)
     return (

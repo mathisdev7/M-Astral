@@ -6,13 +6,16 @@ import { toast } from "sonner";
 import { changeUsername } from "../action/changeUsername.action";
 import { Button } from "../ui/button";
 
-export default function Username({ userId }: { userId: string }) {
+export default function Username({ userId }: Readonly<{ userId: string }>) {
   const [username, setUsername] = useState("");
   const router = useRouter();
   return (
     <div className="flex flex-col items-center justify-center p-4">
       {" "}
-      <label className="text-2xl font-bold dark:text-white text-black p-5">
+      <label
+        htmlFor="username"
+        className="text-2xl font-bold dark:text-white text-black p-5"
+      >
         Choose an username to start posting
       </label>
       <input

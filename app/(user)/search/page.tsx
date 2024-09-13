@@ -30,13 +30,14 @@ export default function Search() {
       />
       {searchResults && searchResults.length > 0
         ? searchResults.map((user) => (
-            <div
+            <a
               key={user.id}
-              onClick={() => router.push(`/user/${user.username}`)}
+              href={`/user/${user.username}`}
               className="flex flex-row items-center justify-center space-x-2 w-full cursor-pointer"
+              tabIndex={0}
             >
               <Image
-                src={user.image || "/default.png"}
+                src={user.image ?? "/default.png"}
                 alt="user profile picture"
                 className="w-10 h-10 rounded-full"
                 width={100}
@@ -54,7 +55,7 @@ export default function Search() {
                   {user.username}
                 </p>
               </div>
-            </div>
+            </a>
           ))
         : null}
     </div>

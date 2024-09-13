@@ -11,13 +11,15 @@ type NotificationWithUserAndAuthor = Notification & {
   author: User;
 };
 
+type LandingProps = {
+  session: Session;
+  notifications: NotificationWithUserAndAuthor[];
+};
+
 export default function Landing({
   session,
   notifications,
-}: {
-  session: Session;
-  notifications: NotificationWithUserAndAuthor[];
-}) {
+}: Readonly<LandingProps>) {
   if (notifications.length === 0) {
     return (
       <p className="text-center relative top-8 text-xl">
@@ -53,15 +55,13 @@ export default function Landing({
               {notification.content.split(" ").map((word, index) => {
                 if (word.startsWith("@")) {
                   return (
-                    <span
-                      key={index}
-                      onClick={() =>
-                        router.push(`/user/@${word.slice(1).replace("!", "")}`)
-                      }
+                    <a
+                      key={`${index}-${word}`}
+                      href={`/user/@${word.slice(1).replace("!", "")}`}
                       className="font-bold text-blue-500 cursor-pointer"
                     >
                       {word}{" "}
-                    </span>
+                    </a>
                   );
                 } else {
                   return <span key={index}>{word} </span>;

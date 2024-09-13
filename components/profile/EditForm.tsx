@@ -1,6 +1,7 @@
 "use client";
 import { User } from "@prisma/client";
 import { LoaderCircle } from "lucide-react";
+import { Session } from "next-auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -14,28 +15,43 @@ import { Switch } from "../ui/switch";
 import { Textarea } from "../ui/textarea";
 import EditAvatar from "./EditAvatar";
 
-export default function EditForm({
-  user,
-  session,
-}: {
-  user: {
-    id: User["id"];
-    name: User["name"];
-    username: User["username"];
-    image: User["image"];
-    bio: User["bio"];
-    location: User["location"];
-    url: User["url"];
-    private: User["private"];
-    verified: User["verified"];
-    profileViews: User["profileViews"];
-  };
-  session: any;
-}) {
+type EditFormProps = {
+  user: User;
+  session: Session;
+};
+
+const validateUserData = (userData: any) => {
+  const errors: string[] = [];
+  const username = userData.username || "";
+  const bio = userData.bio || "";
+  const name = userData.name || "";
+  const location = userData.location || "";
+  const url = userData.url || "";
+
+  const urlRegex = /^(https?:\/\/)?([\w.-]+)\.([a-z]{2,6})([\w./-]*)?$/;
+
+  if (username.includes("@")) errors.push("Username cannot contain @.");
+  if (username.includes(" ")) errors.push("Username cannot contain spaces.");
+  if (username.length < 2) errors.push("Username is too short.");
+  if (username.length > 15) errors.push("Username is too long.");
+
+  if (bio.length > 160) errors.push("Bio is too long.");
+
+  if (name.length > 50) errors.push("Name is too long.");
+
+  if (location.length > 30) errors.push("Location is too long.");
+
+  if (url.length > 50) errors.push("URL is too long.");
+  if (url && !urlRegex.test(url)) errors.push("Invalid URL.");
+
+  return errors;
+};
+
+export default function EditForm({ user, session }: Readonly<EditFormProps>) {
   const router = useRouter();
   const [userData, setUserData] = useState({
     name: user.name,
-    username: user.username,
+    username: user.username as string,
     bio: user.bio,
     location: user.location,
     url: user.url,
@@ -44,86 +60,70 @@ export default function EditForm({
   });
   const [isLoadingPrivate, setIsLoadingPrivate] = useState(false);
   const [isLoadingProfileViews, setIsLoadingProfileViews] = useState(false);
-  const handleSubmit = async (e: any) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+
+    const errors = validateUserData(userData);
+    if (errors.length > 0) {
+      errors.forEach((error) => toast.error(error));
+      return;
+    }
+
+    setUserData((prev) => ({
+      ...prev,
+      username: prev.username.toLowerCase(),
+    }));
+
+    setIsLoading(true);
     try {
-      if (
-        userData.username &&
-        userData.username.slice(1, userData.username.length).includes("@")
-      ) {
-        return toast.error("Username cannot contain @.");
-      }
-      if (userData.username && userData.username.includes(" ")) {
-        return toast.error("Username cannot contain spaces.");
-      }
-      if (userData.username && userData.username.length < 2) {
-        return toast.error("Username is too short.");
-      }
-      if (userData.username && userData.username.length > 15) {
-        return toast.error("Username is too long.");
-      }
-      if (userData.username) {
-        setUserData({ ...userData, username: userData.username.toLowerCase() });
-      }
-      if (userData.bio && userData.bio.length > 160) {
-        return toast.error("Bio is too long.");
-      }
-      if (userData.name && userData.name.length > 50) {
-        return toast.error("Name is too long.");
-      }
-      if (userData.location && userData.location.length > 30) {
-        return toast.error("Location is too long.");
-      }
-      if (userData.url && userData.url.length > 50) {
-        return toast.error("URL is too long.");
-      }
-      const urlRegex = new RegExp(
-        "^(https?://)?([\\w.-]+)\\.([a-z]{2,6})([\\w./-]*)?$"
-      );
-      if (userData.url && !urlRegex.test(userData.url)) {
-        return toast.error("Invalid URL.");
-      }
       await editUser(user.id, userData);
       toast.success("Profile updated.");
       router.refresh();
     } catch (error) {
       console.error(error);
       toast.error("An error occurred.");
+    } finally {
+      setIsLoading(false);
     }
   };
-  const handlePrivate = async (e: any) => {
+
+  const handlePrivate = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoadingPrivate(true);
     await setPrivate(user.id);
     toast.success("Private account updated.");
-    setUserData({ ...userData, private: !userData.private });
+    setUserData((prev) => ({ ...prev, private: !prev.private }));
     setIsLoadingPrivate(false);
   };
-  const handleProfileViews = async (e: any) => {
+
+  const handleProfileViews = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoadingProfileViews(true);
     await setProfileViews(user.id);
     toast.success("Profile views updated.");
-    setUserData({ ...userData, profileViews: !userData.profileViews });
+    setUserData((prev) => ({ ...prev, profileViews: !prev.profileViews }));
     setIsLoadingProfileViews(false);
   };
+
   return (
     <form className="h-full w-full flex justify-center items-center flex-col gap-3">
-      <EditAvatar session={session} user={user} />
+      <EditAvatar session={session} />
       <div className="dark:bg-[#333]/40 bg-[#272829] w-auto h-auto rounded-xl flex flex-col justify-center items-center gap-2 px-24 py-3">
         <div className="flex flex-row gap-2 justify-center items-center">
-          <Label htmlFor="prvate" className="font-bold text-white">
+          <Label htmlFor="private" className="font-bold text-white">
             Private account
           </Label>
           {!isLoadingPrivate ? (
             <Switch
-              onClick={(e) => handlePrivate(e)}
+              onClick={handlePrivate}
               id="private"
               name="private"
               checked={userData.private}
             />
           ) : (
-            <LoaderCircle className="w-6 h-6 animate-spin " />
+            <LoaderCircle className="w-6 h-6 animate-spin" />
           )}
         </div>
         <div className="w-1/2 border border-[#272829] px-20" />
@@ -133,14 +133,14 @@ export default function EditForm({
           </Label>
           {!isLoadingProfileViews ? (
             <Switch
-              onClick={(e) => handleProfileViews(e)}
+              onClick={handleProfileViews}
               id="profileViews"
               name="profileViews"
               className="relative left-[0.60rem]"
               checked={userData.profileViews}
             />
           ) : (
-            <LoaderCircle className="w-6 h-6 animate-spin " />
+            <LoaderCircle className="w-6 h-6 animate-spin" />
           )}
         </div>
       </div>
@@ -153,14 +153,13 @@ export default function EditForm({
             <Label htmlFor="bio" className="font-bold text-white">
               Biography
             </Label>
-
             <Textarea
               onChange={(e) =>
-                setUserData({ ...userData, bio: e.target.value })
+                setUserData((prev) => ({ ...prev, bio: e.target.value }))
               }
               id="bio"
               name="bio"
-              placeholder={user.bio || "Bio"}
+              placeholder={user.bio ?? "Bio"}
               className="w-64 h-16"
             />
           </div>
@@ -170,7 +169,7 @@ export default function EditForm({
             </Label>
             <Input
               onChange={(e) =>
-                setUserData({ ...userData, name: e.target.value })
+                setUserData((prev) => ({ ...prev, name: e.target.value }))
               }
               id="name"
               type="text"
@@ -187,10 +186,10 @@ export default function EditForm({
               type="text"
               name="username"
               onChange={(e) =>
-                setUserData({
-                  ...userData,
-                  username: e.target.value.padStart(1, "@").toLowerCase(),
-                })
+                setUserData((prev) => ({
+                  ...prev,
+                  username: e.target.value.toLowerCase(),
+                }))
               }
               value={userData.username as string}
               placeholder={user.username || "Username"}
@@ -206,10 +205,7 @@ export default function EditForm({
               type="text"
               name="location"
               onChange={(e) =>
-                setUserData({
-                  ...userData,
-                  location: e.target.value,
-                })
+                setUserData((prev) => ({ ...prev, location: e.target.value }))
               }
               placeholder={user.location || "Location"}
               id="location"
@@ -224,7 +220,7 @@ export default function EditForm({
               type="text"
               name="url"
               onChange={(e) =>
-                setUserData({ ...userData, url: e.target.value })
+                setUserData((prev) => ({ ...prev, url: e.target.value }))
               }
               placeholder={user.url || "URL"}
               id="url"
@@ -232,7 +228,7 @@ export default function EditForm({
             />
           </div>
           <Button
-            onClick={(e) => handleSubmit(e)}
+            onClick={handleSubmit}
             className="dark:bg-[#333] bg-[#f0f0f0] dark:text-white text-black rounded-md w-auto h-auto p-2 text-sm hover:bg-white"
           >
             Submit

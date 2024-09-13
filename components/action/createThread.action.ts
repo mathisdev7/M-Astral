@@ -74,7 +74,7 @@ export const createThread = async (
         authorId,
         thread.id,
         `${author.username} mentioned you in a post.`,
-        image || thread?.image || ""
+        (image || thread?.image) ?? ""
       );
     }
   }

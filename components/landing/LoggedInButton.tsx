@@ -11,7 +11,7 @@ const LoggedInButton = async () => {
     return <SignInButton />;
   }
 
-  if (session && session.user?.name) {
+  if (session?.user?.name) {
     return (
       <LoggedInDropdown session={session}>
         <Button

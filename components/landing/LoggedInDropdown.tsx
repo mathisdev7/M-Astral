@@ -18,7 +18,7 @@ export type LoggedInDropdownProps = {
 export default function LoggedInDropdown({
   children,
   session,
-}: LoggedInDropdownProps) {
+}: Readonly<LoggedInDropdownProps>) {
   const router = useRouter();
   return (
     <DropdownMenu>

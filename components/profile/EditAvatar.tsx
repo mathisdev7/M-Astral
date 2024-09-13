@@ -10,26 +10,16 @@ import {
   CredenzaTitle,
   CredenzaTrigger,
 } from "@/components/ui/credenza";
-import { User } from "@prisma/client";
+import { Session } from "next-auth";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import ImageUpload from "../ui/image-upload";
 
-export default function EditAvatar({
-  session,
-  user,
-}: {
-  session: any;
-  user: {
-    id: User["id"];
-    name: User["name"];
-    username: User["username"];
-    image: User["image"];
-    bio: User["bio"];
-    location: User["location"];
-    url: User["url"];
-  };
-}) {
+type EditAvatarProps = {
+  session: Session;
+};
+
+export default function EditAvatar({ session }: Readonly<EditAvatarProps>) {
   return (
     <div className="dark:bg-[#333]/40 bg-[#272829] w-auto h-16 rounded-xl flex flex-row justify-center items-center gap-10 px-8">
       <div className="flex flex-row justify-center items-center gap-2">

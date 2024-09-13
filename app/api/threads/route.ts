@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 
 export async function GET(req: Request, res: Response) {
   try {
-    const { searchParams } = new URL(req.url as string);
+    const { searchParams } = new URL(req.url);
     const page = searchParams.get("page") as string;
-    const pageNumber = parseInt(page as string) || 1;
+    const pageNumber = parseInt(page) || 1;
     const POSTS_PER_PAGE = 10;
 
     const threads = await prisma.thread.findMany({

@@ -1,7 +1,7 @@
 "use client";
 import PrismaTypes from "@prisma/client";
 import { Session } from "next-auth";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 
 type ThreadWithAuthor = PrismaTypes.Thread & {
   author: PrismaTypes.User;
@@ -45,30 +45,24 @@ export const ThreadProvider = ({
 
   const loadMoreThreads = async () => {
     if (loading || !hasMore) return;
-
     setLoading(true);
     const nextPage = page + 1;
-
     const cachedThreadsJSON = localStorage.getItem(`threads-page-${nextPage}`);
     let cachedThreads = null;
     if (cachedThreadsJSON) {
       cachedThreads = JSON.parse(cachedThreadsJSON);
     }
-
     if (cachedThreads && cachedThreads.length > 0) {
       setThreads((prevThreads) => [...prevThreads, ...cachedThreads]);
       setPage(nextPage);
       setLoading(false);
       return;
     }
-
     const res = await fetch(`/api/threads?page=${nextPage}`);
     const data = await res.json();
-
     if (data.length > 0) {
       setThreads((prevThreads) => [...prevThreads, ...data]);
       setPage(nextPage);
-
       localStorage.setItem(`threads-page-${nextPage}`, JSON.stringify(data));
     } else {
       setHasMore(false);
@@ -76,10 +70,18 @@ export const ThreadProvider = ({
     setLoading(false);
   };
 
+  const contextValue = useMemo(
+    () => ({
+      threads,
+      loadMoreThreads,
+      hasMore,
+      loading,
+    }),
+    [threads, loadMoreThreads, hasMore, loading]
+  );
+
   return (
-    <ThreadContext.Provider
-      value={{ threads, loadMoreThreads, hasMore, loading }}
-    >
+    <ThreadContext.Provider value={contextValue}>
       {children}
     </ThreadContext.Provider>
   );

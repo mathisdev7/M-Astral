@@ -1,6 +1,5 @@
 "use server";
 import { prisma } from "@/lib/prisma";
-
 type NotifAction = "like" | "comment" | "follow" | "mention";
 
 export const notification = async (
@@ -10,21 +9,15 @@ export const notification = async (
   threadId?: string
 ) => {
   const author = await prisma.user.findUnique({
-    where: {
-      id: authorId,
-    },
+    where: { id: authorId },
   });
   const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
+    where: { id: userId },
   });
   let thread;
   if (threadId) {
     thread = await prisma.thread.findUnique({
-      where: {
-        id: threadId,
-      },
+      where: { id: threadId },
     });
   }
   if (!author || !user) {
@@ -33,8 +26,9 @@ export const notification = async (
   if (authorId === userId) {
     return await prisma.$disconnect();
   }
+
   switch (type) {
-    case "like":
+    case "like": {
       const notificationAlreadyExistsLike = await prisma.notification.findFirst(
         {
           where: {
@@ -57,7 +51,8 @@ export const notification = async (
         },
       });
       break;
-    case "comment":
+    }
+    case "comment": {
       await prisma.notification.create({
         data: {
           userId,
@@ -68,7 +63,8 @@ export const notification = async (
         },
       });
       break;
-    case "follow":
+    }
+    case "follow": {
       const notificationAlreadyExistsFollow =
         await prisma.notification.findFirst({
           where: {
@@ -87,7 +83,8 @@ export const notification = async (
         },
       });
       break;
-    case "mention":
+    }
+    case "mention": {
       await prisma.notification.create({
         data: {
           userId,
@@ -97,6 +94,8 @@ export const notification = async (
         },
       });
       break;
+    }
   }
+
   return await prisma.$disconnect();
 };

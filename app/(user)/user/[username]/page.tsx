@@ -17,9 +17,48 @@ import {
 import FollowSection from "@/components/user/FollowSection";
 import Section from "@/components/user/Section";
 import { prisma } from "@/lib/prisma";
-import { Follow } from "@prisma/client";
+import type { Follow, Like, Thread, User } from "@prisma/client";
 import { BadgeCheck, Link, Lock, MapPin, X } from "lucide-react";
+import { Session } from "next-auth";
 import Image from "next/image";
+
+type ThreadWithAuthor = Thread & {
+  author: User;
+  likes: Like[];
+};
+
+type ThreadWithAuthorAndComments = ThreadWithAuthor & {
+  comments: {
+    id: string;
+    content: string;
+    createdAt: Date;
+    updatedAt: Date;
+    threadId: string;
+    authorId: string;
+  }[];
+};
+
+type LikedThread = {
+  thread: ThreadWithAuthorAndComments;
+  userId: string;
+  id: string;
+  threadId: string;
+};
+
+type UserWithThreadsAndLikes = User & {
+  threads: ThreadWithAuthorAndComments[];
+  likes: LikedThread[];
+};
+
+type FollowWithUser = Follow & {
+  follower: UserWithThreadsAndLikes;
+  following: UserWithThreadsAndLikes;
+};
+
+type UserWithFollowersAndFollowing = UserWithThreadsAndLikes & {
+  followers: FollowWithUser[];
+  following: FollowWithUser[];
+};
 
 const fetchData = async (username: string) => {
   const session = await auth();
@@ -68,36 +107,11 @@ const fetchData = async (username: string) => {
   return { author, user, session };
 };
 
-export default async function User({
-  params,
-}: {
-  params: { username: string };
-}) {
-  const { author, user, session } = await fetchData(params.username);
-  if (!user) {
-    console.error("User not found or error fetching user.");
-    return (
-      <div>
-        <h1 className="text-2xl dark:text-white text-black text-center">
-          User not found
-        </h1>
-      </div>
-    );
-  }
-  if (!session) {
-    return (
-      <main>
-        <div className="flex flex-row justify-center items-center w-full h-full">
-          <div className="h-full w-full flex justify-center items-center flex-row">
-            <h1 className="text-2xl dark:text-white text-black relative top-6">
-              Please sign in to view this page.
-            </h1>
-          </div>
-        </div>
-      </main>
-    );
-  }
-  if (author?.profileViews && user.profileViews && author.id !== user.id) {
+const createNotificationIfNeeded = async (
+  author: User | null,
+  user: UserWithFollowersAndFollowing | null
+) => {
+  if (author?.profileViews && user?.profileViews && author.id !== user.id) {
     const lastNotification = await prisma.notification.findFirst({
       where: {
         userId: user.id,
@@ -105,9 +119,10 @@ export default async function User({
         content: `${author.username} visited your profile`,
       },
     });
+
     if (
       !lastNotification ||
-      lastNotification?.createdAt < new Date(Date.now() - 86400000)
+      lastNotification.createdAt < new Date(Date.now() - 86400000)
     ) {
       await prisma.notification.create({
         data: {
@@ -118,16 +133,51 @@ export default async function User({
       });
     }
   }
-  const isFollowing = user?.followers.some(
-    (follower: Follow) => follower.followingId === author?.id
-  )
-    ? true
-    : false;
-  const isFollowed = user?.following.some(
-    (following: Follow) => following.followerId === author?.id
-  )
-    ? true
-    : false;
+};
+
+const checkFollowingStatus = (
+  user: UserWithFollowersAndFollowing | null,
+  author: User | null
+) => {
+  const isFollowing =
+    user?.followers.some(
+      (follower: Follow) => follower.followingId === author?.id
+    ) || false;
+
+  const isFollowed =
+    user?.following.some(
+      (following: Follow) => following.followerId === author?.id
+    ) || false;
+
+  return { isFollowing, isFollowed };
+};
+
+const renderUserNotFound = () => (
+  <div>
+    <h1 className="text-2xl dark:text-white text-black text-center">
+      User not found
+    </h1>
+  </div>
+);
+
+const renderSignInPrompt = () => (
+  <main>
+    <div className="flex flex-row justify-center items-center w-full h-full">
+      <div className="h-full w-full flex justify-center items-center flex-row">
+        <h1 className="text-2xl dark:text-white text-black relative top-6">
+          Please sign in to view this page.
+        </h1>
+      </div>
+    </div>
+  </main>
+);
+
+const renderProfileSections = (
+  user: UserWithFollowersAndFollowing,
+  author: User,
+  session: Session
+) => {
+  const { isFollowing, isFollowed } = checkFollowingStatus(user, author);
 
   return (
     <main>
@@ -158,7 +208,7 @@ export default async function User({
               <AlertDialog>
                 <AlertDialogTrigger className="w-auto rounded-full">
                   <Image
-                    src={user?.image || "/default.png"}
+                    src={user?.image ?? "/default.png"}
                     alt="user profile picture"
                     width={800}
                     height={800}
@@ -167,7 +217,7 @@ export default async function User({
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <Image
-                    src={user?.image || "/default.png"}
+                    src={user?.image ?? "/default.png"}
                     alt="user profile picture"
                     width={800}
                     height={800}
@@ -200,7 +250,7 @@ export default async function User({
             </p>
           )}
           <p className="text-sm dark:text-white text-black relative top-2 w-60">
-            {user.bio || "No biography"}
+            {user.bio ?? "No biography"}
           </p>
           <p className="text-[0.9rem] text-[#777] relative top-5 w-60 space-x-1">
             {(isFollowed && isFollowing) ||
@@ -228,7 +278,7 @@ export default async function User({
                       >
                         <div>
                           <Image
-                            src={follower.following.image || "/default.png"}
+                            src={follower.following.image ?? "/default.png"}
                             alt="user profile picture"
                             width={50}
                             height={50}
@@ -280,7 +330,7 @@ export default async function User({
                       >
                         <div>
                           <Image
-                            src={follower.follower.image || "/default.png"}
+                            src={follower.follower.image ?? "/default.png"}
                             alt="user profile picture"
                             width={50}
                             height={50}
@@ -311,7 +361,7 @@ export default async function User({
             )}
           </p>
           <FollowSection user={user} author={author} />
-        </section>
+        </section>{" "}
       </div>
       {(isFollowed && isFollowing) ||
       user.id === session?.user.id ||
@@ -331,5 +381,34 @@ export default async function User({
         </div>
       )}
     </main>
+  );
+};
+
+// Main User component
+export default async function User({
+  params,
+}: {
+  params: { username: string };
+}) {
+  const { author, user, session } = await fetchData(params.username);
+
+  if (!user) {
+    console.error("User not found or error fetching user.");
+    return renderUserNotFound();
+  }
+
+  if (!session) {
+    return renderSignInPrompt();
+  }
+
+  await createNotificationIfNeeded(
+    author,
+    user as unknown as UserWithFollowersAndFollowing
+  );
+
+  return renderProfileSections(
+    user as unknown as UserWithFollowersAndFollowing,
+    author as User,
+    session
   );
 }
