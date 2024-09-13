@@ -42,5 +42,5 @@ lib/categorizeKeywords.ts
 test.ts
 
 prisma/migrations
-.sonnar-project.properties
+sonar-project.properties
 .scannerwork
