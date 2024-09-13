@@ -22,6 +22,9 @@ export default async function ProfileEdit() {
       private: true,
       profileViews: true,
       verified: true,
+      role: true,
+      email: true,
+      emailVerified: true,
     },
   });
   prisma.$disconnect();
