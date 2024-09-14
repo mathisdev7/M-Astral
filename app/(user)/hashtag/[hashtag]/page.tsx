@@ -57,7 +57,7 @@ export default async function HashtagPage({
               session={session}
             >
               <HomePage session={session} />
-            </ThreadProvider>{" "}
+            </ThreadProvider>
           </div>
         ) : (
           <div className="flex justify-center relative">
@@ -66,7 +66,7 @@ export default async function HashtagPage({
             </h1>
           </div>
         )}
-      </div>{" "}
+      </div>
     </main>
   );
 }

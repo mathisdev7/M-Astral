@@ -11,7 +11,7 @@ export const HomePage = ({ session }: { session: Session }) => {
     const handleScroll = () => {
       if (
         window.innerHeight + window.scrollY >=
-          document.body.offsetHeight - 500 &&
+          document.body.offsetHeight - 1000 &&
         hasMore &&
         !loading
       ) {
