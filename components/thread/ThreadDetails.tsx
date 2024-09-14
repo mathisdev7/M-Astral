@@ -149,8 +149,8 @@ export default function ThreadDetails({
 
   return (
     <main className="flex flex-col items-center justify-center w-full h-full">
-      <div className="flex flex-col items-center justify-center w-10/12 md:w-full hover:bg-background/70 cursor-pointer z-30">
-        <div className="flex flex-row items-center justify-center w-full gap-2 border-b-2">
+      <div className="flex flex-col items-center justify-center w-full md:w-full hover:bg-background/70 cursor-pointer z-30">
+        <div className="flex flex-row items-center justify-center w-full gap-2 md:gap-2 border-b-2">
           <Image
             onClick={() => router.push(`/user/${author.username}`)}
             src={
@@ -163,7 +163,7 @@ export default function ThreadDetails({
             className="rounded-full self-start size-10"
           />
           <div className="flex flex-col w-full relative">
-            <div className="flex flex-row w-full md:gap-64">
+            <div className="flex flex-row w-full gap-40 md:gap-64">
               <a
                 href={`/user/${author.username}`}
                 className="text-sm font-bold dark:text-white text-black"
@@ -182,8 +182,8 @@ export default function ThreadDetails({
                   </TooltipProvider>
                 )}
               </a>
-              <div className="flex flex-row items-center gap-2">
-                <span className="text-xs text-gray-500">
+              <div className="flex flex-row items-center gap-1 md:gap-2">
+                <span className="text-xs text-gray-500 relative top-1">
                   {formatRelativeTime(new Date(createdAt))} ago
                 </span>
                 <DropdownMenu>
