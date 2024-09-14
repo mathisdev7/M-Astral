@@ -123,7 +123,7 @@ export const Threads = ({ threads, session, loading }: ThreadsProps) => {
   };
 
   const handleThreadClick = (threadId: string) => {
-    router.push(`/threads/${threadId}`);
+    router.push(`/threads/${threadId}/`);
   };
 
   const handleShareClick = (postId: string) => {
@@ -335,16 +335,13 @@ const parseContent = (
 ) => {
   if (word.startsWith("#")) {
     return (
-      <span
+      <a
         key={index}
         className="text-blue-500 cursor-pointer z-50"
-        onClick={(e) => {
-          e.stopPropagation();
-          onThreadClick(word.slice(1));
-        }}
+        href={`/hashtag/${word.slice(1)}`}
       >
         {word}{" "}
-      </span>
+      </a>
     );
   } else if (word.startsWith("@")) {
     return (

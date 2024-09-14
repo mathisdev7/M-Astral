@@ -34,7 +34,12 @@ export default async function ThreadPage({
     },
   });
 
-  if (!thread) return null;
+  if (!thread)
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <h1 className="text-4xl">Thread not found</h1>
+      </div>
+    );
 
   const isFollowing = await prisma.follow.findFirst({
     where: {

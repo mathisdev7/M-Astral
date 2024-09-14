@@ -51,6 +51,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import Comments from "./Comments";
 
 type CommentWithAuthorAndLikes = PrismaTypes.Comment & {
   author: PrismaTypes.User;
@@ -82,6 +83,7 @@ export default function ThreadDetails({
     comments,
   } = thread;
   const [comment, setComment] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   const handleLike = async () => {
@@ -95,9 +97,17 @@ export default function ThreadDetails({
   };
 
   const handleComment = async () => {
-    await commentAction(session?.user.id, threadId, comment);
-    notification(session?.user.id, author.id, "comment", threadId);
-    router.refresh();
+    setIsSubmitting(true);
+    try {
+      await commentAction(session?.user.id, threadId, comment);
+      notification(session?.user.id, author.id, "comment", threadId);
+      router.refresh();
+      setComment("");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -106,7 +116,7 @@ export default function ThreadDetails({
     router.push("/");
   };
 
-  const renderContent = (text: string) =>
+  const renderContent = (text: string): JSX.Element[] =>
     text.split(/\s+/).map((word, index) => {
       if (word.startsWith("#")) {
         return (
@@ -254,6 +264,7 @@ export default function ThreadDetails({
             )}
             <div className="flex flex-row items-center gap-2 py-1">
               <Heart
+                aria-label="like"
                 className={`size-5 ${
                   likes.some((like) => like.userId === session?.user.id)
                     ? "dark:text-[#ff0000]"
@@ -282,98 +293,52 @@ export default function ThreadDetails({
         </div>
 
         <Dialog>
-          <DialogTrigger className="dark:bg-[#333] bg-[#f0f0f0] dark:text-white text-black rounded-md p-2.5 text-sm relative top-4">
+          <DialogTrigger className="dark:bg-[#333] bg-[#f0f0f0] dark:text-white text-black rounded-md p-2.5 text-sm relative top-4 flex items-center gap-2">
+            <Pencil className="w-4 h-4" />
             Write a comment
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle className="text-center p-2 pb-3">
-                Write a comment
-              </DialogTitle>
-              <div className="flex flex-col items-center space-y-4">
-                <Label htmlFor="text" className="sr-only">
-                  Message
-                </Label>
-                <Textarea
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  id="text"
-                  placeholder="Write a comment"
-                  className="w-80 h-20 rounded-lg border border-gray-300 bg-white p-2 text-sm text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-                <DialogClose asChild>
-                  <Button
-                    type="submit"
-                    size="sm"
-                    onClick={handleComment}
-                    className="px-3 dark:text-black text-white"
-                  >
-                    Comment
-                  </Button>
-                </DialogClose>
-              </div>
+              <DialogTitle>Comment this thread</DialogTitle>
             </DialogHeader>
+            <div className="flex flex-col items-center space-y-4 mt-4">
+              <Label htmlFor="text" className="text-md">
+                Your Comment
+              </Label>
+              <Textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                id="text"
+                placeholder="Write a comment..."
+                className="w-80 h-20 rounded-lg border border-gray-300 bg-white p-2 text-sm text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <span className="text-xs text-gray-500">
+                {comment.length}/280 characters
+              </span>
+              <DialogClose asChild>
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={isSubmitting || !comment}
+                  onClick={handleComment}
+                  className="px-3 dark:text-black text-white"
+                >
+                  {isSubmitting ? "Submitting..." : "Comment"}
+                </Button>
+              </DialogClose>
+            </div>
           </DialogContent>
         </Dialog>
 
         <div className="relative top-10 w-full">
-          {comments.map(({ id, author, content, createdAt, likes }) => (
-            <div key={id} className="flex flex-col items-start gap-2">
-              <div className="flex flex-row items-center gap-2">
-                <Image
-                  onClick={() => router.push(`/user/${author.username}`)}
-                  src={
-                    author.image ||
-                    "https://i0.wp.com/www.repol.copl.ulaval.ca/wp-content/uploads/2019/01/default-user-icon.jpg?ssl=1"
-                  }
-                  alt="author avatar"
-                  width={1000}
-                  height={1000}
-                  className="rounded-full size-10"
-                />
-                <div className="flex flex-col w-full">
-                  <div className="flex flex-row w-full gap-32">
-                    <span
-                      onClick={() => router.push(`/user/${author.username}`)}
-                      className="text-sm font-bold dark:text-white text-black truncate"
-                    >
-                      {author.name}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {formatRelativeTime(createdAt)} ago
-                    </span>
-                  </div>
-                  <span className="text-sm dark:text-white text-black pb-4 py-2 w-56">
-                    {renderContent(content)}
-                  </span>
-                  <div className="flex flex-row items-center gap-2 py-2">
-                    <Heart
-                      className={`size-5 ${
-                        likes.some((like) => like.userId === session?.user.id)
-                          ? "dark:text-[#ff0000]"
-                          : "dark:text-white"
-                      }`}
-                      fill={
-                        likes.some((like) => like.userId === session?.user.id)
-                          ? "red"
-                          : "none"
-                      }
-                      onClick={() => handleCommentLike(id)}
-                    />
-                    <span className="text-gray-500">‧</span>
-                    <MessageSquare
-                      className="size-5 dark:text-white"
-                      onClick={() => router.push(`/threads/${id}`)}
-                    />
-                  </div>
-                  <div className="flex flex-row items-center gap-1 py-2">
-                    <span className="text-xs text-gray-500">
-                      {likes.length} like{likes.length > 1 ? "s" : ""}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+          {comments.map((commentData) => (
+            <Comments
+              key={commentData.id}
+              commentData={commentData}
+              session={session}
+              handleCommentLike={handleCommentLike}
+              renderContent={renderContent}
+            />
           ))}
         </div>
       </div>
