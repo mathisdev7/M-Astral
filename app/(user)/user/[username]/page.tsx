@@ -1,6 +1,7 @@
 "use server";
 
 import { auth } from "@/auth/auth";
+import SignIn from "@/components/errors/SignIn";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -160,17 +161,7 @@ const renderUserNotFound = () => (
   </div>
 );
 
-const renderSignInPrompt = () => (
-  <main>
-    <div className="flex flex-row justify-center items-center w-full h-full">
-      <div className="h-full w-full flex justify-center items-center flex-row">
-        <h1 className="text-2xl dark:text-white text-black relative top-6">
-          Please sign in to view this page.
-        </h1>
-      </div>
-    </div>
-  </main>
-);
+const renderSignInPrompt = () => <SignIn />;
 
 const renderProfileSections = (
   user: UserWithFollowersAndFollowing,
@@ -384,7 +375,6 @@ const renderProfileSections = (
   );
 };
 
-// Main User component
 export default async function User({
   params,
 }: {

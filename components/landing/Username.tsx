@@ -6,7 +6,11 @@ import { toast } from "sonner";
 import { changeUsername } from "../action/changeUsername.action";
 import { Button } from "../ui/button";
 
-export default function Username({ userId }: Readonly<{ userId: string }>) {
+type UsernameProps = {
+  userId: string;
+};
+
+export default function Username({ userId }: Readonly<UsernameProps>) {
   const [username, setUsername] = useState("");
   const router = useRouter();
   return (

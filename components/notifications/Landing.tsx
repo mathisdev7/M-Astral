@@ -1,7 +1,6 @@
 "use client";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
 import { Notification, User } from "@prisma/client";
-import { Session } from "next-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
@@ -12,14 +11,10 @@ type NotificationWithUserAndAuthor = Notification & {
 };
 
 type LandingProps = {
-  session: Session;
   notifications: NotificationWithUserAndAuthor[];
 };
 
-export default function Landing({
-  session,
-  notifications,
-}: Readonly<LandingProps>) {
+export default function Landing({ notifications }: Readonly<LandingProps>) {
   if (notifications.length === 0) {
     return (
       <p className="text-center relative top-8 text-xl">

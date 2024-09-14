@@ -19,7 +19,7 @@ export default async function Notifications() {
 
   return (
     <div>
-      <Landing session={session} notifications={notifications} />
+      <Landing notifications={notifications} />
     </div>
   );
 }
