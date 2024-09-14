@@ -14,12 +14,26 @@ export async function GET(req: Request, res: Response) {
       orderBy: {
         createdAt: "desc",
       },
-      include: {
-        author: true,
+      select: {
+        id: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+        image: true,
+        authorId: true,
         likes: true,
         comments: {
           include: {
             author: true,
+          },
+        },
+        author: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            verified: true,
+            image: true,
           },
         },
       },

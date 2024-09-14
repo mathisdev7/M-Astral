@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatRelativeTime } from "@/lib/formatRelativeTime";
 import PrismaTypes from "@prisma/client";
 import {
   BadgeCheck,
@@ -198,9 +199,9 @@ const ThreadCard = ({
         className="rounded-full size-10 self-start"
       />
       <div className="flex flex-col items-start justify-center w-full relative">
-        <div className="flex flex-row w-full gap-40 md:gap-64">
-          <span
-            onClick={() => onUserClick(post.author.username)}
+        <div className="flex flex-row w-full gap-40 md:gap-60">
+          <a
+            href={`/user/${post.author.username}`}
             className="text-sm font-bold dark:text-white text-black relative w-auto"
           >
             {post.author.name}
@@ -216,35 +217,40 @@ const ThreadCard = ({
                 </Tooltip>
               </TooltipProvider>
             )}
-          </span>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="relative top-1">
-              <MoreHorizontal className="size-5 text-gray-400" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {post.authorId === session?.user.id ||
-              session?.user.role === "ADMIN" ? (
-                <>
-                  <DropdownMenuItem>
-                    <Pencil className="size-4 mr-2" />
-                    Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onDelete(post.id)}>
-                    <Trash2 className="size-4 mr-2" />
-                    Delete
-                  </DropdownMenuItem>
-                </>
-              ) : null}
-              <DropdownMenuItem>
-                <Flag className="size-4 mr-2" />
-                Report
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onShareClick(post.id)}>
-                <Share className="size-4 mr-2" />
-                Share
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          </a>
+          <div className="flex flex-row items-center gap-1 md:gap-2">
+            <span className="text-xs text-gray-500 relative top-1">
+              {formatRelativeTime(new Date(post.createdAt))} ago
+            </span>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="relative top-1">
+                <MoreHorizontal className="size-5 text-gray-400" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {post.authorId === session?.user.id ||
+                session?.user.role === "ADMIN" ? (
+                  <>
+                    <DropdownMenuItem>
+                      <Pencil className="size-4 mr-2" />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onDelete(post.id)}>
+                      <Trash2 className="size-4 mr-2" />
+                      Delete
+                    </DropdownMenuItem>
+                  </>
+                ) : null}
+                <DropdownMenuItem>
+                  <Flag className="size-4 mr-2" />
+                  Report
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onShareClick(post.id)}>
+                  <Share className="size-4 mr-2" />
+                  Share
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
         <span
           onClick={() => onThreadClick(post.id)}
