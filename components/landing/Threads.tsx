@@ -317,7 +317,7 @@ const ThreadCard = ({
           <span className="text-xs text-gray-500 relative top-px">
             {post.likes.length} like{post.likes.length > 1 ? "s" : ""}
           </span>
-          <span className="text-gray-500 relative top-1">‧</span>
+          <span className="text-gray-500 relative top-[1px]">‧</span>
           <span className="text-xs text-gray-500 relative top-px">
             {post.comments.length} comment{post.comments.length > 1 ? "s" : ""}
           </span>

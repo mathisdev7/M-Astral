@@ -1,3 +1,4 @@
+import { auth } from "@/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -7,12 +8,55 @@ export async function GET(req: Request, res: Response) {
     const page = searchParams.get("page") as string;
     const pageNumber = parseInt(page) || 1;
     const POSTS_PER_PAGE = 10;
+    const session = await auth();
+    if (!session) {
+      return new NextResponse(
+        JSON.stringify({ error: "Please sign in to view this page." }),
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
 
     const threads = await prisma.thread.findMany({
       skip: (pageNumber - 1) * POSTS_PER_PAGE,
       take: POSTS_PER_PAGE,
       orderBy: {
         createdAt: "desc",
+      },
+      where: {
+        OR: [
+          {
+            author: {
+              private: false,
+            },
+          },
+          {
+            AND: [
+              {
+                author: {
+                  followers: {
+                    some: {
+                      followingId: session.user.id,
+                    },
+                  },
+                },
+              },
+              {
+                author: {
+                  following: {
+                    some: {
+                      followerId: session.user.id,
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        ],
       },
       select: {
         id: true,
@@ -23,8 +67,23 @@ export async function GET(req: Request, res: Response) {
         authorId: true,
         likes: true,
         comments: {
-          include: {
-            author: true,
+          select: {
+            author: {
+              select: {
+                id: true,
+                username: true,
+                name: true,
+                verified: true,
+                image: true,
+              },
+            },
+            content: true,
+            createdAt: true,
+            id: true,
+            likes: true,
+            updatedAt: true,
+            authorId: true,
+            threadId: true,
           },
         },
         author: {
