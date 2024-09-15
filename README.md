@@ -2,7 +2,7 @@
 
 **M'Astral** is a modern social media platform that allows users to share thoughts, ideas, and connect with others. This project is built with Next.js and leverages various technologies to provide a smooth and responsive user experience.
 
-![fthreads](https://media.discordapp.net/attachments/972878173488447568/1280029206553563269/icon_2.png?ex=66dbdd98&is=66da8c18&hm=bc318f7dbdd78a68fbf61fe7b1a4271114fe9485193efd3d4bc1630ab1dd232f&=&format=webp&quality=lossless)
+![mastral](https://media.discordapp.net/attachments/972878173488447568/1280029206553563269/icon_2.png?ex=66dbdd98&is=66da8c18&hm=bc318f7dbdd78a68fbf61fe7b1a4271114fe9485193efd3d4bc1630ab1dd232f&=&format=webp&quality=lossless)
 
 ## Features
 
@@ -27,8 +27,8 @@
 1. **Clone the repository**:
 
    ```bash
-   git clone git@github.com:mathisdev7/Fthreads.git Fthreads
-   cd Fthreads
+   git clone git@github.com:mathisdev7/M-Astral.git Mastral
+   cd Mastral
    ```
 
 2. **Install dependencies**:

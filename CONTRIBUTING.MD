@@ -6,7 +6,7 @@ Thank you for considering contributing to **M'Astral**! We appreciate your inter
 
 ### Reporting Issues
 
-If you encounter any bugs or issues, please report them by [opening an issue](https://github.com/mathisdev7/Fthreads/issues). Provide as much detail as possible, including:
+If you encounter any bugs or issues, please report them by [opening an issue](https://github.com/mathisdev7/M-Astral/issues). Provide as much detail as possible, including:
 
 - A clear description of the problem
 - Steps to reproduce the issue
@@ -14,7 +14,7 @@ If you encounter any bugs or issues, please report them by [opening an issue](ht
 
 ### Suggesting Features
 
-If you have an idea for a new feature or improvement, feel free to [open an issue](https://github.com/mathisdev7/Fthreads/issues) with a feature request. Include:
+If you have an idea for a new feature or improvement, feel free to [open an issue](https://github.com/mathisdev7/M-Astral/issues) with a feature request. Include:
 
 - A detailed description of the feature
 - The problem it solves or the benefit it provides
@@ -31,8 +31,8 @@ We welcome contributions via pull requests. To submit a pull request:
 2. **Clone your fork**:
 
    ```bash
-   git clone git@github.com:mathisdev7/Fthreads.git Fthreads
-   cd Fthreads
+   git clone git@github.com:mathisdev7/M-Astral.git Mastral
+   cd Mastral
    ```
 
 3. **Create a new branch**:
@@ -60,13 +60,13 @@ We welcome contributions via pull requests. To submit a pull request:
    ```
 
 7. **Open a pull request**:
-   - Go to the [pull requests page](https://github.com/mathisdev7/Fthreads/pulls) of the repository.
+   - Go to the [pull requests page](https://github.com/mathisdev7/M-Astral/pulls) of the repository.
    - Click on "New pull request".
    - Select your branch and provide a clear description of your changes.
 
 ## Getting Help
 
-If you need help with contributing or have any questions, feel free to [open an issue](https://github.com/mathisdev7/Fthreads/issues) or reach out to us through the project's discussions or contact methods.
+If you need help with contributing or have any questions, feel free to [open an issue](https://github.com/mathisdev7/M-Astral/issues) or reach out to us through the project's discussions or contact methods.
 
 ---
 
