@@ -47,7 +47,7 @@ export const notification = async (
           authorId,
           threadId,
           content: `${author?.username} liked your post.`,
-          image: thread?.image,
+          image: thread?.images[0],
         },
       });
       break;
@@ -59,7 +59,7 @@ export const notification = async (
           authorId,
           threadId,
           content: `${author?.username} commented on your post.`,
-          image: thread?.image,
+          image: thread?.images[0],
         },
       });
       break;
@@ -90,7 +90,7 @@ export const notification = async (
           userId,
           authorId,
           content: `${author?.username} mentioned you in a post.`,
-          image: thread?.image,
+          image: thread?.images[0],
         },
       });
       break;

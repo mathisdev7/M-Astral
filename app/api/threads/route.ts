@@ -63,7 +63,7 @@ export async function GET(req: Request, res: Response) {
         content: true,
         createdAt: true,
         updatedAt: true,
-        image: true,
+        images: true,
         authorId: true,
         likes: true,
         comments: {

@@ -31,7 +31,7 @@ export default function Section({
   userLikedThreads: LikedThread[];
 }) {
   const [choice, setChoice] = useState("threads");
-  const threadsWithMedia = userThreads.filter((thread) => thread.image);
+  const threadsWithMedia = userThreads.filter((thread) => thread.images);
   return (
     <Fragment>
       <div className="flex flex-row justify-center items-center w-full relative top-7 p-1">
