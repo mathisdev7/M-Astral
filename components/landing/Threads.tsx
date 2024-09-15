@@ -1,11 +1,5 @@
 "use client";
 import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -23,15 +17,27 @@ import {
   Pencil,
   Share,
   Trash2,
+  View,
   X,
 } from "lucide-react";
 import { Session } from "next-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import "swiper/css";
+import "swiper/css/pagination";
+import { Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { deleteThread } from "../action/deleteThread.action";
 import { like } from "../action/like.action";
 import { notification } from "../action/notification.action";
+
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
 import {
   Tooltip,
   TooltipContent,
@@ -248,6 +254,15 @@ const ThreadCard = ({
                   <Share className="size-4 mr-2" />
                   Share
                 </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <a
+                    className="w-full flex flex-row items-center justify-center"
+                    href={`/threads/${post.id}`}
+                  >
+                    <View className="size-4 mr-2" />
+                    View Thread
+                  </a>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -262,32 +277,43 @@ const ThreadCard = ({
               parseContent(word, index, onUserClick, onThreadClick)
             )}
         </span>
-        {post.image && (
-          <div className="w-full h-52">
-            <AlertDialog>
-              <AlertDialogTrigger className="w-auto rounded-full">
-                <Image
-                  src={post?.image || "/default.png"}
-                  alt="post image preview"
-                  width={1000}
-                  height={1000}
-                  className="w-80 h-52 object-cover rounded-xl"
-                />
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <Image
-                  src={post?.image || "/default.png"}
-                  alt="post image full size"
-                  width={2000}
-                  height={2000}
-                  className="w-full"
-                />
-                <AlertDialogCancel className="w-auto h-auto">
-                  <X />
-                </AlertDialogCancel>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
+        {post.images?.length > 0 && (
+          <Swiper
+            modules={[Pagination]}
+            pagination={true}
+            navigation
+            spaceBetween={10}
+            slidesPerView={1}
+            className="max-w-xs w-full h-52 rounded-xl relative md:right-9"
+          >
+            {post.images?.map((image, index) => (
+              <SwiperSlide key={index} className="w-full h-52">
+                <AlertDialog key={index}>
+                  <AlertDialogTrigger className="w-full h-52 rounded-xl">
+                    <Image
+                      src={image}
+                      alt={`post image ${index + 1}`}
+                      width={1000}
+                      height={1000}
+                      className="w-full h-52 object-cover rounded-xl"
+                    />
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <Image
+                      className="w-full flex flex-row items-center justify-center"
+                      alt={`post image ${index + 1}`}
+                      width={1000}
+                      height={1000}
+                      src={image}
+                    />
+                    <AlertDialogCancel>
+                      <X />
+                    </AlertDialogCancel>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         )}
         <div className="flex flex-row items-center justify-start gap-2 pt-0.5 w-full">
           <Heart

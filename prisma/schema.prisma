@@ -96,7 +96,7 @@ model User {
 model Thread {
   id        String   @id @default(cuid())
   content   String
-  image     String?
+  images     String[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)

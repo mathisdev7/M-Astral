@@ -14,7 +14,7 @@ const createNotificationForUser = async (
   authorId: string,
   threadId: string,
   content: string,
-  image: string
+  images: string[]
 ) => {
   await prisma.notification.create({
     data: {
@@ -22,7 +22,7 @@ const createNotificationForUser = async (
       authorId,
       threadId,
       content,
-      image,
+      image: images[0] ?? null,
     },
   });
 };
@@ -36,7 +36,7 @@ const extractMentions = (content: string) => {
 
 export const createThread = async (
   authorId: string,
-  image: string,
+  images: string[],
   content: null | string
 ) => {
   if (!content) {
@@ -59,7 +59,7 @@ export const createThread = async (
     data: {
       authorId,
       content,
-      image: image || null,
+      images: images,
     },
   });
 
@@ -74,7 +74,7 @@ export const createThread = async (
         authorId,
         thread.id,
         `${author.username} mentioned you in a post.`,
-        (image || thread?.image) ?? ""
+        images
       );
     }
   }

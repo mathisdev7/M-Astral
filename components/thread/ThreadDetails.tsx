@@ -31,6 +31,11 @@ import { Session } from "next-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Pagination } from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/pagination";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { comment as commentAction } from "../action/comment.action";
 import { commentLike } from "../action/commentLike.action";
 import { deleteThread } from "../action/deleteThread.action";
@@ -77,7 +82,7 @@ export default function ThreadDetails({
     id: threadId,
     author,
     content,
-    image,
+    images,
     createdAt,
     likes,
     comments,
@@ -173,7 +178,7 @@ export default function ThreadDetails({
             className="rounded-full self-start size-10"
           />
           <div className="flex flex-col w-full relative">
-            <div className="flex flex-row w-full gap-40 md:gap-64">
+            <div className="flex flex-row w-full gap-48 md:gap-64">
               <a
                 href={`/user/${author.username}`}
                 className="text-sm font-bold dark:text-white text-black"
@@ -192,7 +197,7 @@ export default function ThreadDetails({
                   </TooltipProvider>
                 )}
               </a>
-              <div className="flex flex-row items-center gap-1 md:gap-2">
+              <div className="flex flex-row items-center gap-2">
                 <span className="text-xs text-gray-500 relative top-1">
                   {formatRelativeTime(new Date(createdAt))} ago
                 </span>
@@ -232,36 +237,49 @@ export default function ThreadDetails({
                 </DropdownMenu>
               </div>
             </div>
-            <span className="text-sm dark:text-white text-black w-72 md:w-80">
+            <span className="text-sm dark:text-white text-black w-72 md:w-80 py-0.5">
               {renderContent(content)}
             </span>
-            {image && (
-              <div className="w-full h-52">
-                <AlertDialog>
-                  <AlertDialogTrigger className="w-auto rounded-full">
-                    <Image
-                      src={image}
-                      alt="post image preview"
-                      width={1000}
-                      height={1000}
-                      className="w-80 h-52 object-cover rounded-xl"
-                    />
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <Image
-                      src={image}
-                      alt="post image full size"
-                      width={1000}
-                      height={1000}
-                      className="w-full"
-                    />
-                    <AlertDialogCancel>
-                      <X />
-                    </AlertDialogCancel>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            )}
+            <div className="max-w-xs w-full h-52">
+              {images?.length > 0 && (
+                <Swiper
+                  modules={[Pagination]}
+                  pagination={true}
+                  navigation
+                  spaceBetween={10}
+                  slidesPerView={1}
+                  className="w-auto h-52 rounded-xl relative"
+                >
+                  {images?.map((image, index) => (
+                    <SwiperSlide key={index} className="w-full h-52">
+                      <AlertDialog key={index}>
+                        <AlertDialogTrigger className="w-full h-52 rounded-xl">
+                          <Image
+                            src={image}
+                            alt={`post image ${index + 1}`}
+                            width={1000}
+                            height={1000}
+                            className="w-full h-52 object-cover rounded-xl"
+                          />
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <Image
+                            className="w-full flex flex-row items-center justify-center"
+                            alt={`post image ${index + 1}`}
+                            width={1000}
+                            height={1000}
+                            src={image}
+                          />
+                          <AlertDialogCancel>
+                            <X />
+                          </AlertDialogCancel>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              )}
+            </div>
             <div className="flex flex-row items-center gap-2 py-1">
               <Heart
                 aria-label="like"

@@ -44,7 +44,7 @@ export default function Comments({
           className="rounded-full size-10"
         />
         <div className="flex flex-col w-full">
-          <div className="flex flex-row w-full gap-56">
+          <div className="flex flex-row w-full gap-40">
             <span
               onClick={() => router.push(`/user/${author.username}`)}
               className="text-sm font-bold dark:text-white text-black truncate"

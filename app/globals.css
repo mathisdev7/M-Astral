@@ -4,6 +4,8 @@
 
 @layer base {
   :root {
+    --swiper-pagination-color: #fff;
+    --swiper-pagination-bullet-inactive-color: #ccc;
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -65,7 +67,6 @@
     --ring: 0 0% 83.1%;
   }
 }
-
 @layer base {
   * {
     @apply border-border;

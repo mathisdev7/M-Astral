@@ -24,27 +24,28 @@ export default function ThreadForm() {
         return toast.error("Content is required");
       }
 
-      const imageFile = event.currentTarget.image.files[0];
-      if (imageFile) {
-        const imageFormData = new FormData();
-        imageFormData.append("file", imageFile);
-        imageFormData.append("upload_preset", "fthread-preset-name");
-        const response = await axios.post(
-          `https://api.cloudinary.com/v1_1/deflgbu3s/image/upload`,
-          imageFormData
-        );
-        await createThread(
-          session.data?.user.id as string,
-          response.data.secure_url,
-          isContentEmpty
-        );
-      } else {
-        await createThread(
-          session.data?.user.id as string,
-          event.currentTarget.image.files[0],
-          event.currentTarget.content.value
-        );
+      const imageFiles = event.currentTarget.image.files;
+      let imageUrls = [];
+
+      if (imageFiles.length > 0) {
+        for (const imageFile of imageFiles) {
+          const imageFormData = new FormData();
+          imageFormData.append("file", imageFile);
+          imageFormData.append("upload_preset", "fthread-preset-name");
+          const response = await axios.post(
+            `https://api.cloudinary.com/v1_1/deflgbu3s/image/upload`,
+            imageFormData
+          );
+          imageUrls.push(response.data.secure_url);
+        }
       }
+
+      await createThread(
+        session.data?.user.id as string,
+        imageUrls,
+        isContentEmpty
+      );
+
       toast.success("Thread created");
       window.location.href = "/";
     } catch (error) {
@@ -52,6 +53,7 @@ export default function ThreadForm() {
       console.error(error);
     }
   };
+
   return (
     <div>
       <h1 className="text-2xl text-center">Create a new thread</h1>
@@ -65,9 +67,9 @@ export default function ThreadForm() {
         </Label>
         <Textarea id="content" name="content" rows={5} />
         <Label htmlFor="image" className="relative top-2">
-          Image
+          Images
         </Label>
-        <Input id="image" name="image" type="file" accept="image/*" />
+        <Input id="image" name="image" type="file" accept="image/*" multiple />
         <Button type="submit" className="dark:text-black text-white">
           Create thread
         </Button>
