@@ -43,41 +43,19 @@ model Session {
   @@map("sessions")
 }
 
-model UserPreference {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  categories Category[]
-  interactions Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-enum Category {
-  GENERAL
-  TECHNOLOGY
-  LIFESTYLE
-  BUSINESS
-  ENTERTAINMENT
-  SPORTS
-  CARS
-  GADGETS
-  MUSIC
-}
-
 model User {
   id            String    @id @default(cuid())
-  username      String?    @unique
+  username      String?   @unique
   name          String?
   email         String?   @unique @map(name: "email")
   emailVerified DateTime? @map("email_verified")
-  image        String? @map(name: "image")
+  image         String?   @map(name: "image")
   bio           String?
   url           String?
   location      String?
   private       Boolean   @default(false)
   verified      Boolean   @default(false)
-  profileViews  Boolean       @default(false)
+  profileViews  Boolean   @default(false)
   role          Role      @default(USER)
   accounts      Account[]
   sessions      Session[]
@@ -87,11 +65,23 @@ model User {
   likes         Like[]
   comments      Comment[]
   commentLikes  CommentLike[]
-  preferences   UserPreference[]
-  notifications Notification[] @relation("UserNotifications")
+  interests     UserInterest[]
+  notifications Notification[]     @relation("UserNotifications")
   notificationsMade Notification[] @relation("AuthorNotifications")
-  @@map("users")
 }
+
+model UserInterest {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category  String
+  thread    BigInt?
+  like      BigInt?
+  comment   BigInt?  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 
 model Thread {
   id        String   @id @default(cuid())
@@ -103,6 +93,7 @@ model Thread {
   authorId  String
   likes     Like[]
   comments  Comment[]
+  category  String[]
 }
 
 model Notification {

@@ -93,7 +93,7 @@ export const Threads = ({ threads, session, loading }: ThreadsProps) => {
       setIsAnimating({ status: false, threadId });
     }, 250);
 
-    const likeState = await like(session.user.id as string, threadId);
+    const likeState = await like(session.user.id, threadId);
     if (likeState) {
       await notification(session.user.id as string, userId, "like", threadId);
     }
@@ -188,7 +188,7 @@ const ThreadCard = ({
   onShareClick,
 }: ThreadCardProps) => (
   <div
-    key={post.id}
+    key={`${post.id}-${post.category}-${post.createdAt}`}
     className="flex flex-col items-center justify-center w-full hover:bg-background/70 cursor-pointer z-30 p-1"
   >
     <div className="flex flex-row items-center justify-center w-full gap-2 border-b-2">
