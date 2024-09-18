@@ -2,7 +2,7 @@
 
 **M'Astral** is a modern social media platform that allows users to share thoughts, ideas, and connect with others. This project is built with Next.js and leverages various technologies to provide a smooth and responsive user experience.
 
-![mastral](https://media.discordapp.net/attachments/972878173488447568/1280029206553563269/icon_2.png?ex=66dbdd98&is=66da8c18&hm=bc318f7dbdd78a68fbf61fe7b1a4271114fe9485193efd3d4bc1630ab1dd232f&=&format=webp&quality=lossless)
+![mastral](https://i.imgur.com/qcOf2MA.png)
 
 ## Features
 
